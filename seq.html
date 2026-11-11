@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>排序練習 - 語言程序訓練</title>
+
+<!-- Web App 全螢幕模式支援標籤 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 外部 CDN 套件 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+<style>
+  :root {
+    --primary: #3B82F6;
+    --primary-hover: #2563EB;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --card-border: rgba(148, 163, 184, 0.6);
+
+    --card-img-ratio: 1;
+    --left-card-w: clamp(80px, 7.5vw, 105px);
+  }
+
+  * { box-sizing: border-box; font-family: "PingFang HK", "Microsoft JhengHei", sans-serif; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* 溫潤舒壓微漸變背景 */
+  body {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #EEF2FF 0%, #F0FDF4 50%, #FDF2F8 100%);
+    transition: background-color 0.3s;
+  }
+
+  @keyframes urgentPinkPulse {
+    0%, 100% { background: linear-gradient(135deg, #EEF2FF 0%, #F0FDF4 50%, #FDF2F8 100%); }
+    50% { background: #FFE4E6; }
+  }
+  body.urgent-flash { animation: urgentPinkPulse 0.8s infinite; }
+
+  /* 頂部整合導航列 */
+  header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .title-group { display: flex; align-items: baseline; gap: 8px; }
+  .title-group h1 { font-size: clamp(1rem, 1.6vw, 1.25rem); margin: 0; color: #1E293B; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+  .current-lesson-tag { font-size: 0.82rem; color: #64748B; font-weight: 600; }
+  .nav-btns { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+
+  .btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 5px 11px;
+    border-radius: 9px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-success { background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25); }
+  .btn-secondary { background: #64748B; box-shadow: 0 2px 6px rgba(100, 116, 139, 0.2); }
+  .btn-outline {
+    background: rgba(255, 255, 255, 0.75);
+    color: #334155;
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  }
+  .btn-fullscreen { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25); }
+  .btn-fullscreen.active { background: #6D28D9; border: 1.5px solid #EDE9FE; }
+
+  /* 離開按鈕 */
+  .btn-leave {
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.12);
+  }
+  .btn-leave:hover { background: #FEE2E2; }
+
+  /* 奪目的時序連接詞按鈕 */
+  @keyframes prominentPulse {
+    0%, 100% {
+      box-shadow: 0 3px 12px rgba(234, 88, 12, 0.4);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 5px 20px rgba(249, 115, 22, 0.8);
+      transform: scale(1.04);
+    }
+  }
+
+  .btn-connective-prominent {
+    background: linear-gradient(135deg, #FF6B00 0%, #EA580C 50%, #C2410C 100%) !important;
+    color: #FFFFFF !important;
+    font-size: 0.92rem !important;
+    padding: 6px 14px !important;
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+    border: 2px solid #FFEDD5 !important;
+    animation: prominentPulse 1.8s infinite ease-in-out;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+  .btn-connective-prominent.active {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border-color: #D1FAE5 !important;
+    animation: none !important;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3) !important;
+  }
+
+  /* 半透明輕量計時膠囊 */
+  .timer-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    border-radius: 9px;
+    padding: 3px 8px;
+    font-size: 0.78rem;
+    color: #334155;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  }
+  .timer-pill input[type="checkbox"] { margin: 0; cursor: pointer; }
+  .timer-display-badge { font-weight: bold; color: #DC2626; margin-left: 2px; }
+
+  /* 遊戲主舞台 */
+  .game-container {
+    flex: 1;
+    height: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    padding: 8px 12px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(79, 70, 229, 0.06);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .empty-guide-screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    z-index: 10;
+  }
+  .guide-icon { font-size: clamp(3rem, 6vw, 4.5rem); margin-bottom: 12px; }
+  .guide-title { font-size: clamp(1.2rem, 2.2vw, 1.6rem); font-weight: bold; color: #1E293B; margin-bottom: 8px; }
+  .guide-desc { font-size: clamp(0.85rem, 1.2vw, 1rem); color: #64748B; max-width: 480px; line-height: 1.5; margin-bottom: 24px; }
+  .guide-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+  /* ---------------- 【核心比例調整】：左 1 : 右 12 (約 7.7% : 92.3%) ---------------- */
+  .left-panel {
+    flex: 0 0 7.7%;
+    width: 7.7%;
+    min-width: 84px; /* 安全下限保護 */
+    border-right: 2px dashed rgba(203, 213, 225, 0.7);
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y !important;
+    height: 100%;
+    max-height: 100%;
+  }
+  .left-panel::-webkit-scrollbar { width: 5px; }
+  .left-panel::-webkit-scrollbar-track { background: rgba(241, 245, 249, 0.6); border-radius: 4px; }
+  .left-panel::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 4px; }
+
+  .panel-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .panel-title { font-size: 0.85rem; font-weight: bold; color: #334155; margin: 0; }
+
+  .shuffle-area {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: stretch;
+    padding: 2px 2px 60px 2px;
+    touch-action: pan-y !important;
+    width: 100%;
+  }
+  .shuffle-area .card-item {
+    width: 100% !important;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .right-panel {
+    flex: 1;
+    width: 92.3%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-left: 6px;
+    min-width: 0;
+  }
+
+  /* 提示功能欄與橫幅 */
+  .hint-control-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(241, 245, 249, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    border-radius: 8px;
+    padding: 3px 8px;
+    margin-bottom: 4px;
+    font-size: 0.76rem;
+  }
+  .hint-control-bar .hint-label {
+    font-weight: 700;
+    color: #4338CA;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .hint-btn-group { display: flex; gap: 4px; }
+
+  .hint-text-banner {
+    display: none;
+    flex-shrink: 0;
+    background: rgba(238, 242, 255, 0.95);
+    border: 1.5px solid #A5B4FC;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    color: #3730A3;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    box-shadow: 0 3px 8px rgba(99, 102, 241, 0.12);
+  }
+  .hint-text-banner.speaking {
+    border-color: #6366F1;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.35);
+  }
+  .hint-close-btn {
+    background: none;
+    border: none;
+    color: #6366F1;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+
+  .flow-canvas {
+    flex: 1;
+    height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    width: 100%;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex: 0 0 auto;
+    min-height: 0;
+    gap: 6px;
+    overflow: visible;
+  }
+
+  .turn-indicator-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px 0;
+    color: #2563EB;
+    font-weight: bold;
+    height: 14px;
+    flex: 0 0 14px;
+    line-height: 1;
+  }
+  .turn-indicator-bar span {
+    background: rgba(239, 246, 255, 0.85);
+    border: 1px solid rgba(191, 219, 254, 0.8);
+    backdrop-filter: blur(4px);
+    padding: 0 8px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .arrow-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(16px, 1.6vw, 24px);
+    height: clamp(16px, 1.6vw, 24px);
+    background: rgba(241, 245, 249, 0.85);
+    color: #475569;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: clamp(10px, 1vw, 14px);
+    border: 1px solid rgba(203, 213, 225, 0.7);
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+    margin: 0 2px;
+  }
+
+  /* 卡槽樣式 */
+  .slot {
+    border: 2px dashed var(--card-border);
+    border-radius: 12px;
+    display: flex;
+    position: relative;
+    background: rgba(248, 250, 252, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    transition: width 0.2s, height 0.2s;
+  }
+  .slot-number {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.28);
+  }
+
+  /* 卡片本體 */
+  .card-item {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 11px;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    user-select: none;
+    touch-action: pan-y !important;
+    position: relative;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .slot .card-item { width: 100%; height: 100%; }
+  .card-item.reading-highlight { outline: 3px solid var(--warning); transform: scale(1.02); z-index: 10; }
+  .card-item:active { cursor: grabbing; }
+
+  /* 圖卡圖片區域 */
+  .card-img-container {
+    width: 100%;
+    position: relative;
+    aspect-ratio: var(--card-img-ratio, 1 / 1);
+    background: #FFFFFF;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    display: block;
+  }
+  
+  .card-quick-zoom-btn {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background: rgba(15, 23, 42, 0.65);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+
+  .card-caption-box {
+    padding: 3px 5px;
+    text-align: center;
+    font-size: clamp(11px, 1vw, 13px);
+    font-weight: 700;
+    color: #1E293B;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-all;
+    line-height: 1.25;
+    min-height: 24px;
+    flex: 1 1 auto;
+  }
+
+  /* 時序連接詞強調樣式：大 20% (1.2em)，多彩粗體 */
+  .connective-tag {
+    font-size: 1.22em;
+    font-weight: 900;
+    margin-right: 2px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.06);
+    display: inline-block;
+  }
+
+  body.hide-card-captions .card-img-container + .card-caption-box {
+    display: none !important;
+  }
+
+  /* 純文字卡樣式 */
+  .text-card-body {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 6px;
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.95) 0%, rgba(220, 252, 231, 0.95) 100%);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+    box-sizing: border-box;
+  }
+  .text-card-content {
+    font-weight: 800;
+    color: #166534;
+    text-align: center;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.35;
+    width: 100%;
+    white-space: normal;
+    overflow: visible;
+    display: block;
+  }
+
+  .slot .text-card-body {
+    height: calc(100% - 25px);
+    padding: 10px;
+  }
+  .slot .text-card-content {
+    font-size: clamp(14px, 1.6vw, 22px) !important;
+    line-height: 1.4;
+  }
+
+  .card-tools {
+    flex: 0 0 25px;
+    height: 25px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: rgba(248, 250, 252, 0.85);
+    border-top: 1px solid rgba(226, 232, 240, 0.7);
+  }
+  .tool-btn { background: none; border: none; font-size: 13px; cursor: pointer; padding: 1px 6px; }
+
+  .bottom-bar {
+    flex-shrink: 0;
+    margin-top: 6px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn-check {
+    font-size: 1rem;
+    padding: 8px 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  }
+
+  /* 放大檢視 Modal */
+  #zoomModal { padding: 6px; }
+
+  .zoom-content-wrapper {
+    position: relative;
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: 8px 10px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 96vw;
+    max-width: 98vw;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 96dvh;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .zoom-img-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #zoomImg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    object-fit: contain;
+  }
+
+  .zoom-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: none;
+    font-size: 22px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+    z-index: 5;
+    transition: 0.2s;
+  }
+  .zoom-nav-btn:hover { background: white; transform: translateY(-50%) scale(1.08); }
+  .zoom-nav-btn.prev { left: 8px; }
+  .zoom-nav-btn.next { right: 8px; }
+  .zoom-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  /* 手機直向模式 (Portrait) 特殊適配 */
+  @media (max-width: 600px) and (orientation: portrait) {
+    body { padding: 4px 6px; }
+    header { margin-bottom: 3px; }
+    .title-group h1 { font-size: 0.95rem; }
+    .nav-btns .btn { padding: 4px 6px; font-size: 0.72rem; }
+
+    .game-container { flex-direction: column; gap: 4px; padding: 6px 8px; }
+    .left-panel {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      max-height: 140px;
+      border-right: none;
+      border-bottom: 2px dashed rgba(203, 213, 225, 0.7);
+      padding-right: 0;
+      padding-bottom: 4px;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+    }
+    .panel-header-row { margin-bottom: 3px; }
+    .panel-title { font-size: 0.85rem; }
+    .shuffle-area { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 2px 2px 8px 2px; }
+    .shuffle-area .card-item { width: 88px !important; flex-shrink: 0; }
+
+    .right-panel { flex: 1 !important; width: 100% !important; padding-left: 0; }
+    .flow-canvas { justify-content: space-evenly; padding: 2px; }
+    .bottom-bar { margin-top: 4px; }
+    .btn-check { padding: 6px 28px; font-size: 0.95rem; }
+
+    .zoom-content-wrapper { width: 98vw; height: 96dvh; padding: 6px 8px; }
+    .zoom-nav-btn { width: 36px; height: 36px; font-size: 18px; }
+    .zoom-nav-btn.prev { left: 4px; }
+    .zoom-nav-btn.next { right: 4px; }
+  }
+
+  /* 彈窗樣式 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+  }
+  .modal-box {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 18px;
+    padding: 18px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16);
+  }
+  .modal-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 12px; color: #1E293B; }
+
+  .batch-upload-zone {
+    border: 2px dashed rgba(59, 130, 246, 0.6);
+    background: rgba(239, 246, 255, 0.7);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .batch-upload-zone:hover { background: #DBEAFE; }
+
+  .edit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+    gap: 10px;
+    max-height: 40vh;
+    overflow-y: auto;
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+  .edit-card-item {
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    border-radius: 10px;
+    padding: 6px;
+    background: rgba(248, 250, 252, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    gap: 4px;
+  }
+  .edit-card-thumb {
+    width: 100%;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid #E2E8F0;
+  }
+  .text-thumb-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #DCFCE7;
+    color: #166534;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    padding: 4px;
+  }
+  .edit-step-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #3B82F6;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .edit-card-del {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #EF4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cropper-container-box { width: 100%; height: 300px; background: #0F172A; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+  .crop-toolbar { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+  
+  /* 題庫清單項與多選樣式 */
+  .lib-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    background: rgba(255,255,255,0.85);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: 0.15s;
+  }
+  .lib-item:hover { background: #F8FAFC; }
+  .lib-item input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    accent-color: var(--danger);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-group">
+    <h1>🧩 排序練習</h1>
+    <div class="current-lesson-tag" id="currentLessonTitle">尚未載入練習</div>
+  </div>
+
+  <div class="nav-btns">
+    <!-- 輕巧計時膠囊 -->
+    <div class="timer-pill">
+      <input type="checkbox" id="timerEnableCheck" onchange="toggleTimerSettings()">
+      <span id="timerLabel">計時</span>
+      <span id="timerDisplayBadge" class="timer-display-badge" style="display:none;">01:00</span>
+    </div>
+
+    <!-- 全螢幕 / 退出切換 -->
+    <button class="btn btn-fullscreen" id="fullscreenBtn" onclick="toggleFullscreen()">⛶ 全螢幕</button>
+    <button class="btn btn-outline" onclick="openLibraryModal()">📚 題庫</button>
+    <button class="btn btn-secondary" onclick="openEditModal()">✏️ 製作</button>
+    <button class="btn btn-secondary" onclick="exportJSON()">📤 匯出</button>
+    <button class="btn btn-success" style="background:#059669;" onclick="openImportModal()">📥 匯入</button>
+    <button class="btn" onclick="initGame()">🔄 打亂</button>
+
+    <!-- 新增：離開練習功能 -->
+    <button class="btn btn-leave" onclick="exitCurrentLesson()" title="離開練習並清空目前卡片">🚪 離開</button>
+  </div>
+</header>
+
+<div class="game-container" id="gameContainer">
+  <!-- 首次使用引導畫面 -->
+  <div class="empty-guide-screen" id="emptyGuideScreen">
+    <div class="guide-icon">📂</div>
+    <div class="guide-title">歡迎使用排序練習！</div>
+    <div class="guide-desc">
+      目前尚未載入任何練習題。<br>
+      請點擊下方按鈕<b>匯入教材</b>，或直接<b>新增圖片/純文字</b>製作新題目！
+    </div>
+    <div class="guide-actions">
+      <button class="btn btn-success" style="font-size: 1.05rem; padding: 10px 24px;" onclick="openImportModal()">📥 立即匯入教材</button>
+      <button class="btn btn-outline" style="font-size: 1.05rem; padding: 10px 20px;" onclick="openEditModal()">✏️ 製作新題目 (最多10張)</button>
+    </div>
+  </div>
+
+  <!-- 左：待選盤 (1:12 比例，約佔 7.7% 寬度) -->
+  <div class="left-panel">
+    <div class="panel-header-row">
+      <div class="panel-title">程序卡匣</div>
+    </div>
+    <div class="shuffle-area" id="shuffleArea" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+  </div>
+
+  <!-- 右：大舞台流程區 (1:12 比例，約佔 92.3% 巨大畫布空間) -->
+  <div class="right-panel">
+    <div class="panel-header-row">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div class="panel-title">依次序排列程序圖</div>
+        <!-- 奪目的橙色時序連接詞按鈕 -->
+        <button id="toggleConnectiveBtn" class="btn btn-connective-prominent" style="display: none;" onclick="toggleConnectives()">
+          🔗 加入時序連接詞
+        </button>
+      </div>
+
+      <div>
+        <button id="layoutSwitchBtn" class="btn btn-outline" style="font-size:0.75rem; padding:2px 6px;" onclick="cycleFlowLayoutMode()">
+          🔄 切換 (<span id="layoutModeLabel">雙層</span>)
+        </button>
+      </div>
+    </div>
+
+    <!-- 提示功能列 -->
+    <div id="hintControlBar" class="hint-control-bar" style="display: none;">
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span class="hint-label">💡 提示詞：</span>
+        <div class="hint-btn-group">
+          <button class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem;" onclick="startProgressiveHint('text')">📝 僅文字</button>
+          <button class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem;" onclick="startProgressiveHint('audio')">🔊 僅讀出</button>
+          <button class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem;" onclick="startProgressiveHint('both')">🌟 文字+讀出</button>
+        </div>
+      </div>
+
+      <!-- 顯示/隱藏圖卡標題按鈕 -->
+      <div>
+        <button id="btnToggleCaption" class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem; color: #047857; border-color: #A7F3D0; background: #ECFDF5;" onclick="toggleCardCaptions()">
+          🙈 隱藏標題
+        </button>
+      </div>
+    </div>
+
+    <!-- 展開的提示文字橫幅 (支援前置背景引導導言) -->
+    <div id="hintTextBanner" class="hint-text-banner">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+        <div id="hintTextContent" style="font-weight: 700; flex: 1;"></div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="btnNextHint" class="btn btn-primary" style="padding: 3px 11px; font-size: 0.78rem; background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);" onclick="nextProgressiveHint()">
+            ➡️ 下一個提示
+          </button>
+          <button class="hint-close-btn" onclick="hideHintBanner()">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-canvas" id="flowCanvas"></div>
+  </div>
+</div>
+
+<div class="bottom-bar" id="bottomControlBar">
+  <button class="btn btn-success btn-check" id="checkAnswerBtn" onclick="checkAnswer()">排好了 (檢查)</button>
+</div>
+
+<!-- 放大檢視 Modal (極致滿版) -->
+<div class="modal-overlay" id="zoomModal">
+  <div class="zoom-content-wrapper">
+    <div class="zoom-img-container">
+      <button class="zoom-nav-btn prev" id="zoomPrevBtn" onclick="navigateZoom(-1)">◀</button>
+      <img id="zoomImg" src="">
+      <button class="zoom-nav-btn next" id="zoomNextBtn" onclick="navigateZoom(1)">▶</button>
+    </div>
+
+    <div id="zoomText" style="color: white; font-size: clamp(1rem, 1.8vw, 1.35rem); font-weight: bold; margin: 6px 0 2px; text-align: center; max-width: 90vw; line-height: 1.25;"></div>
+    <div id="zoomLockNotice" style="color: #94A3B8; font-size: 0.75rem; margin-bottom: 4px; display: none;">🔒 完成正確排序後，可按左右箭頭連續瀏覽全程序</div>
+
+    <div style="display: flex; gap: 10px; margin-top: 2px;">
+      <button class="btn btn-primary" style="font-size: 0.85rem; padding: 5px 16px;" onclick="speakCurrentZoomText()">🔊 朗讀說明</button>
+      <button class="btn" style="background: #E2E8F0; color: #1E293B; font-size: 0.85rem; padding: 5px 16px;" onclick="closeZoomModal()">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- 圖片裁切 Modal -->
+<div class="modal-overlay" id="cropperModal" style="z-index: 1100;">
+  <div class="modal-box" style="max-width: 620px;">
+    <div class="modal-title" id="cropperModalTitle">✂️ 選擇圖片範圍 (可選局部或全張)</div>
+    <div class="cropper-container-box">
+      <img id="cropperTargetImg" style="max-width: 100%; display: block;" src="">
+    </div>
+    <div class="crop-toolbar">
+      <button class="btn btn-outline" onclick="if(cropper)cropper.rotate(-90)">↺ 左轉 90°</button>
+      <button class="btn btn-outline" onclick="if(cropper)cropper.rotate(90)">↻ 右轉 90°</button>
+      <button class="btn btn-outline" onclick="if(cropper)cropper.reset()">🔄 重設選框</button>
+    </div>
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+      <button class="btn btn-outline" onclick="closeCropperModal()">取消</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-outline" id="cropperSkipAllBtn" style="display:none;" onclick="applyAllRemainingFull()">⏩ 剩餘全部用整張</button>
+        <button class="btn btn-secondary" onclick="applyFullImage()">🖼️ 使用整張圖片</button>
+        <button class="btn btn-success" onclick="applyCroppedImage()">✂️ 裁切所選部分</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 匯入教材 Modal -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal-box">
+    <div class="modal-title">📥 匯入教材</div>
+    <div style="border: 2px dashed #3B82F6; background: #EFF6FF; border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 12px;">
+      <b>📷 方式 1：相機掃描 QR Code 獲取題目</b>
+      <div style="margin-top: 8px;">
+        <button class="btn btn-primary" id="startScanBtn" onclick="startQrScanner()">開啟相機掃描</button>
+      </div>
+      <div id="qrReaderContainer" style="display: none; margin-top: 10px;">
+        <div id="qrReader" style="width: 100%; border-radius: 8px; overflow: hidden;"></div>
+        <button class="btn btn-outline" style="margin-top: 8px; color: var(--danger);" onclick="stopQrScanner()">關閉相機</button>
+      </div>
+    </div>
+    <div style="border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 12px; padding: 10px;">
+      <b>📁 方式 2：上載 .json 檔案</b><br>
+      <input type="file" id="importFileInput" accept=".json" style="margin-top: 6px;" onchange="importByFile(event)">
+    </div>
+    <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+      <button class="btn btn-outline" onclick="closeImportModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 製作/編輯彈窗 -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-title">✏️ 製作/編輯排序卡 (最多10張)</div>
+    
+    <div style="margin-bottom: 8px;">
+      <label><b>練習名稱：</b></label>
+      <input type="text" id="lessonTitleInput" placeholder="例如：早上起床流程 / 炒飯步驟" style="width:100%; padding:6px 8px; border:1px solid #CBD5E1; border-radius:6px; margin-top:2px;">
+    </div>
+
+    <!-- 程序提示文字稿改為：第一步前置的背景/導言提示 -->
+    <div style="margin-bottom: 10px; background: rgba(241, 245, 249, 0.75); border: 1px solid rgba(203, 213, 225, 0.9); border-radius: 8px; padding: 7px 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <label style="font-size: 0.82rem; color: #334155;"><b>📖 題目背景介紹 / 開場導言 (可選)：</b></label>
+      </div>
+      <textarea id="lessonScriptInput" placeholder="例如：小明今日要自己預備返學，等我地一齊睇下佢有咩步驟啦！（此段文字會在播放第 1 步提示前最先顯示及朗讀）" style="width: 100%; height: 50px; font-size: 11.5px; padding: 5px 7px; border: 1px solid #CBD5E1; border-radius: 6px; resize: vertical; line-height: 1.35;"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+      <div class="batch-upload-zone" style="flex: 1; min-width: 170px;" onclick="document.getElementById('batchFileInput').click()">
+        <span style="font-size: 1.3rem;">📸</span>
+        <b style="color: #1E293B; font-size: 0.85rem; display: block;">一次性挑選照片 (可裁切)</b>
+        <span style="font-size: 0.7rem; color: #64748B;">支援多選，依序選擇是否裁切</span>
+        <input type="file" id="batchFileInput" accept="image/*" multiple style="display:none;" onchange="handleBatchImages(event)">
+      </div>
+
+      <div class="batch-upload-zone" style="flex: 1; min-width: 170px; border-color: #10B981; background: #ECFDF5;" onclick="addNewTextOnlyCard()">
+        <span style="font-size: 1.3rem;">📝</span>
+        <b style="color: #065F46; font-size: 0.88rem; display: block;">新增純文字卡 (免圖片)</b>
+        <span style="font-size: 0.7rem; color: #047857;">直接打字，適合語文訓練</span>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+      <b>卡片步驟列表 (<span id="editCardsCount">0</span>/10 張)：</b>
+      <div style="display: flex; gap: 4px;">
+        <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 7px; color: #4338CA; border-color: #C7D2FE; background: #EEF2FF;" onclick="autoFillAllCardHints()">
+          ✨ 自動填入時序提示詞 (首先/跟住/最後)
+        </button>
+        <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 6px;" onclick="clearAllEditCards()">清空重選</button>
+      </div>
+    </div>
+
+    <div class="edit-grid" id="editCardsContainer"></div>
+
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+      <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
+      <button class="btn btn-success" onclick="saveEditedLesson()">儲存並加入練習庫</button>
+    </div>
+  </div>
+</div>
+
+<!-- 練習庫彈窗 (支援批次剔選刪除) -->
+<div class="modal-overlay" id="libModal">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+      <div class="modal-title" style="margin: 0;">📚 我的練習庫</div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <label style="font-size: 0.8rem; color: #475569; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="checkbox" id="selectAllLibCheck" onchange="toggleSelectAllLibrary(this.checked)"> 全選
+        </label>
+        <button class="btn" style="background: #EF4444; color: white; padding: 4px 10px; font-size: 0.78rem;" onclick="batchDeleteFromLibrary()">
+          🗑️ 批次刪除選取
+        </button>
+      </div>
+    </div>
+    
+    <div id="libraryList" style="margin-top: 8px; max-height: 52vh; overflow-y: auto;"></div>
+    
+    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+      <button class="btn btn-outline" onclick="document.getElementById('libModal').style.display='none'">關閉</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentLesson = null;
+  let draggedCardId = null;
+
+  let isGameFinishedAndCorrect = false;
+  let isConnectivesActive = false;
+  let currentZoomStep = 1;
+
+  let flowLayoutMode = 'single';
+  let currentLessonAspectRatio = 1.0;
+
+  let isCardCaptionHidden = false;
+
+  let timerInterval = null;
+  let timerRemainingSeconds = 60;
+  let isTimerRunning = false;
+
+  let cropper = null;
+  let rawUploadedImageSrc = null;
+  let html5QrScanner = null;
+
+  let editingCardsList = [];
+
+  let batchCropQueue = [];
+  let currentQueueIndex = 0;
+  let isBatchCropping = false;
+  let singleCropCardIndex = null;
+
+  // 提示進度步驟 (0 代表前置導言，1..N 代表各步驟)
+  let progressiveHintStep = 0;
+  let progressiveHintMode = 'both';
+
+  // Web Audio API
+  let audioCtx = null;
+  function getAudioContext() {
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function playCardMoveSound() {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(210, now);
+      osc.frequency.exponentialRampToValueAtTime(125, now + 0.08);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.16, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.085);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    } catch (e) {}
+  }
+
+  function isMobilePortrait() {
+    return window.innerWidth <= 600 && window.innerHeight > window.innerWidth;
+  }
+
+  function detectEnvironment() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    if (isPortrait) {
+      document.body.classList.add('env-portrait');
+      document.body.classList.remove('env-landscape');
+    } else {
+      document.body.classList.add('env-landscape');
+      document.body.classList.remove('env-portrait');
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    detectEnvironment();
+    if (currentLesson) {
+      applyDefaultLayoutMode();
+      renderSlots(true);
+      refreshSlotCaptions();
+    }
+  });
+  window.addEventListener('orientationchange', () => setTimeout(() => {
+    detectEnvironment();
+    if (currentLesson) {
+      applyDefaultLayoutMode();
+      renderSlots(true);
+      refreshSlotCaptions();
+    }
+  }, 200));
+
+  /* 🚪 離開功能：清空當前所有卡片，返回引導頁讓用戶重新載入/匯入 */
+  function exitCurrentLesson() {
+    if (currentLesson) {
+      if (!confirm("確定要離開目前練習嗎？這將會清空目前排好的卡片。")) {
+        return;
+      }
+    }
+    stopTimer();
+    stopUrgentFlash();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    showEmptyGuide();
+  }
+
+  function toggleCardCaptions() {
+    playCardMoveSound();
+    isCardCaptionHidden = !isCardCaptionHidden;
+    document.body.classList.toggle('hide-card-captions', isCardCaptionHidden);
+    
+    const btn = document.getElementById('btnToggleCaption');
+    if (btn) {
+      btn.innerHTML = isCardCaptionHidden ? '👁️ 顯示標題' : '🙈 隱藏標題';
+      if (isCardCaptionHidden) {
+        btn.style.color = '#B45309';
+        btn.style.borderColor = '#FDE68A';
+        btn.style.background = '#FFFBEB';
+      } else {
+        btn.style.color = '#047857';
+        btn.style.borderColor = '#A7F3D0';
+        btn.style.background = '#ECFDF5';
+      }
+    }
+    
+    if (currentLesson) {
+      renderSlots(true);
+      refreshSlotCaptions();
+    }
+  }
+
+  function enterFullscreen() {
+    const el = document.documentElement;
+    try {
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(() => {});
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      }
+    } catch (e) {}
+  }
+
+  function exitFullscreen() {
+    try {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    } catch (e) {}
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      enterFullscreen();
+    } else {
+      exitFullscreen();
+    }
+  }
+
+  function updateFullscreenBtnUI() {
+    const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    const btn = document.getElementById('fullscreenBtn');
+    if (btn) {
+      btn.innerHTML = isFull ? '🗗 退出' : '⛶ 全螢幕';
+      if (isFull) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  }
+
+  document.addEventListener('fullscreenchange', updateFullscreenBtnUI);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenBtnUI);
+
+  let autoFullscreenTriggered = false;
+  function triggerAutoFullscreenOnFirstTouch() {
+    if (!autoFullscreenTriggered) {
+      autoFullscreenTriggered = true;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        enterFullscreen();
+      }
+    }
+  }
+  document.addEventListener('touchstart', triggerAutoFullscreenOnFirstTouch, { passive: true, once: true });
+  document.addEventListener('click', triggerAutoFullscreenOnFirstTouch, { once: true });
+
+  function applyDefaultLayoutMode() {
+    const count = currentLesson ? currentLesson.cards.length : 4;
+    if (isMobilePortrait() && count >= 4) {
+      flowLayoutMode = 'twoRow';
+    } else {
+      flowLayoutMode = (count <= 4) ? 'single' : 'twoRow';
+    }
+    updateLayoutButtonUI();
+  }
+
+  function updateLayoutButtonUI() {
+    const count = currentLesson ? currentLesson.cards.length : 4;
+    const switchBtn = document.getElementById('layoutSwitchBtn');
+    const label = document.getElementById('layoutModeLabel');
+    if (count <= 3 && !isMobilePortrait()) {
+      switchBtn.style.display = 'none';
+      flowLayoutMode = 'single';
+    } else {
+      switchBtn.style.display = 'inline-flex';
+    }
+    label.innerText = (flowLayoutMode === 'single') ? '單行' : '雙層';
+  }
+
+  function cycleFlowLayoutMode() {
+    playCardMoveSound();
+    flowLayoutMode = (flowLayoutMode === 'single') ? 'twoRow' : 'single';
+    updateLayoutButtonUI();
+    renderSlots(true);
+    refreshSlotCaptions();
+  }
+
+  function detectImageAspectRatio(callback) {
+    if (!currentLesson || !currentLesson.cards || !currentLesson.cards[0] || !currentLesson.cards[0].img) {
+      currentLessonAspectRatio = 1.0;
+      document.documentElement.style.setProperty('--card-img-ratio', 1.0);
+      if (callback) callback();
+      return;
+    }
+
+    const testImg = new Image();
+    testImg.onload = function() {
+      if (testImg.naturalWidth && testImg.naturalHeight) {
+        currentLessonAspectRatio = testImg.naturalWidth / testImg.naturalHeight;
+      } else {
+        currentLessonAspectRatio = 1.0;
+      }
+      document.documentElement.style.setProperty('--card-img-ratio', currentLessonAspectRatio);
+      if (callback) callback();
+    };
+    testImg.onerror = function() {
+      currentLessonAspectRatio = 1.0;
+      document.documentElement.style.setProperty('--card-img-ratio', 1.0);
+      if (callback) callback();
+    };
+    testImg.src = currentLesson.cards[0].img;
+  }
+
+  function getOptimalSlotDimensions(cardsInRow, isTwoRow) {
+    const canvas = document.getElementById('flowCanvas');
+    const mobile = isMobilePortrait();
+    
+    const paddingSafety = mobile ? 8 : 24;
+    const availW = canvas ? Math.max(100, canvas.clientWidth - paddingSafety) : 360;
+    let availH = canvas ? (canvas.clientHeight || 450) : 450;
+
+    if (isTwoRow) availH = (availH - 16) / 2;
+
+    const footerH = isCardCaptionHidden ? 28 : (mobile ? 42 : 50); 
+    const arrowTotalSpace = mobile ? 20 : 30; 
+    const totalGaps = (cardsInRow - 1) * arrowTotalSpace;
+    const maxW = (availW - totalGaps) / cardsInRow;
+    const maxH = availH * 0.98;
+    const r = currentLessonAspectRatio || 1.0;
+
+    let optW = Math.min(maxW, (maxH - footerH) * r);
+    optW = Math.max(mobile ? 70 : 55, optW);
+    let optH = optW / r + footerH;
+
+    return { width: Math.floor(optW), height: Math.floor(optH) };
+  }
+
+  /* 時序連接詞定義與專屬色彩 */
+  function getConnectorWord(stepIndex, totalSteps) {
+    if (stepIndex === 1) return "首先";
+    if (stepIndex === totalSteps) return "最後";
+    if (stepIndex === 2) return "跟住";
+    if (stepIndex === 3) return "然後";
+    if (stepIndex === 4) return "之後";
+    if (stepIndex === 5) return "然後";
+    if (stepIndex === 6) return "之後";
+    return "跟住";
+  }
+
+  function getConnectorWordColor(word) {
+    switch(word) {
+      case "首先": return "#DC2626"; // 亮紅
+      case "跟住": return "#EA580C"; // 活力橙
+      case "然後": return "#2563EB"; // 皇家藍
+      case "之後": return "#059669"; // 寶石綠
+      case "最後": return "#9333EA"; // 尊貴紫
+      default: return "#D97706";
+    }
+  }
+
+  /* 返回卡片標題 HTML（放大20%並賦予多彩） */
+  function getCardDisplayHTML(card, isInTargetSlot = false, slotStep = 1) {
+    if (isInTargetSlot && isConnectivesActive) {
+      const prefix = getConnectorWord(slotStep, currentLesson.cards.length);
+      const color = getConnectorWordColor(prefix);
+      return `<span class="connective-tag" style="color: ${color};">${prefix}</span>，${card.text}`;
+    }
+    return card.text;
+  }
+
+  /* 返回純文字（供語音朗讀） */
+  function getCardPlainText(card, isInTargetSlot = false, slotStep = 1) {
+    if (isInTargetSlot && isConnectivesActive) {
+      const prefix = getConnectorWord(slotStep, currentLesson.cards.length);
+      return `${prefix}，${card.text}`;
+    }
+    return card.text;
+  }
+
+  function computeDynamicFontSize(text, isInSlot = false) {
+    const len = text.length;
+    if (isInSlot) {
+      if (len > 20) return 'clamp(13px, 1.4vw, 17px)';
+      if (len > 12) return 'clamp(15px, 1.7vw, 20px)';
+      return 'clamp(17px, 2vw, 24px)';
+    } else {
+      if (len > 22) return '11px';
+      if (len > 14) return '12.5px';
+      if (len > 8) return '13.5px';
+      return '15px';
+    }
+  }
+
+  function speakText(e, text, onEndCallback = null) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (!('speechSynthesis' in window)) return;
+
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-HK';
+
+    const voices = window.speechSynthesis.getVoices();
+    const zhVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('HK') || v.lang.includes('yue'));
+
+    if (zhVoices.length > 0) {
+      const preferredVoice = zhVoices.find(v => v.name.toLowerCase().includes('female') || v.name.includes('Sinji') || v.name.includes('Tingting') || v.name.includes('Tracy'));
+      if (preferredVoice) u.voice = preferredVoice;
+    }
+    u.pitch = 1.15;
+    u.rate = 0.95;
+
+    if (onEndCallback) {
+      u.onend = onEndCallback;
+      u.onerror = onEndCallback;
+    }
+    window.speechSynthesis.speak(u);
+  }
+
+  function getSingleCardHint(stepNum) {
+    if (!currentLesson || !currentLesson.cards || !currentLesson.cards[stepNum - 1]) return "";
+    const card = currentLesson.cards[stepNum - 1];
+    const total = currentLesson.cards.length;
+
+    if (card.hint && card.hint.trim()) {
+      return card.hint.trim();
+    }
+    return `${getConnectorWord(stepNum, total)}，${card.text || '步驟' + stepNum}`;
+  }
+
+  /* 💡 提示詞：若有開場背景文字稿，最先顯示並讀出它！ */
+  function startProgressiveHint(mode) {
+    playCardMoveSound();
+    if (!currentLesson || !currentLesson.cards || currentLesson.cards.length === 0) return;
+
+    progressiveHintMode = mode;
+    const hasScriptIntro = !!(currentLesson.script && currentLesson.script.trim());
+    
+    // 如果有背景文字稿，從第 0 步 (前言) 開始；否則從第 1 步開始
+    progressiveHintStep = hasScriptIntro ? 0 : 1;
+    showCurrentProgressiveHint();
+  }
+
+  function showCurrentProgressiveHint() {
+    const total = currentLesson.cards.length;
+    const banner = document.getElementById('hintTextBanner');
+    const content = document.getElementById('hintTextContent');
+    const nextBtn = document.getElementById('btnNextHint');
+
+    let displayText = "";
+    let speechText = "";
+
+    if (progressiveHintStep === 0) {
+      // 顯示並讀出前置背景資料
+      const intro = currentLesson.script.trim();
+      displayText = `<span style="color:#D97706; font-size: 1.05em;">【📖 題目背景介紹】</span> ${intro}`;
+      speechText = intro;
+      nextBtn.innerText = '➡️ 開始第 1 步提示';
+      nextBtn.style.background = 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)';
+    } else {
+      const hint = getSingleCardHint(progressiveHintStep);
+      displayText = `<span style="color:#6366F1;">【第 ${progressiveHintStep}/${total} 步提示】</span> ${hint}`;
+      speechText = hint;
+
+      if (progressiveHintStep < total) {
+        nextBtn.innerText = '➡️ 下一個提示';
+        nextBtn.style.background = 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)';
+      } else {
+        nextBtn.innerText = '✓ 提示完畢 (點擊重播)';
+        nextBtn.style.background = 'linear-gradient(135deg, #059669 0%, #047857 100%)';
+      }
+    }
+
+    if (progressiveHintMode === 'audio') {
+      content.innerHTML = `<span style="color:#6366F1;">【${progressiveHintStep === 0 ? '背景介紹' : `第 ${progressiveHintStep}/${total} 步`}】</span> 🔊 語音播放中...`;
+      banner.style.display = 'block';
+      banner.classList.add('speaking');
+      speakText(null, speechText, () => banner.classList.remove('speaking'));
+    } else if (progressiveHintMode === 'text') {
+      content.innerHTML = displayText;
+      banner.style.display = 'block';
+      banner.classList.remove('speaking');
+    } else {
+      content.innerHTML = displayText;
+      banner.style.display = 'block';
+      banner.classList.add('speaking');
+      speakText(null, speechText, () => banner.classList.remove('speaking'));
+    }
+
+    if (currentLesson) renderSlots(true);
+  }
+
+  function nextProgressiveHint() {
+    playCardMoveSound();
+    const total = currentLesson ? currentLesson.cards.length : 0;
+    if (total === 0) return;
+
+    const hasScriptIntro = !!(currentLesson.script && currentLesson.script.trim());
+
+    if (progressiveHintStep < total) {
+      progressiveHintStep++;
+      showCurrentProgressiveHint();
+    } else {
+      progressiveHintStep = hasScriptIntro ? 0 : 1;
+      showCurrentProgressiveHint();
+    }
+  }
+
+  function hideHintBanner() {
+    const banner = document.getElementById('hintTextBanner');
+    banner.style.display = 'none';
+    banner.classList.remove('speaking');
+    progressiveHintStep = 0;
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    if (currentLesson) renderSlots(true);
+  }
+
+  function autoFillAllCardHints() {
+    playCardMoveSound();
+    if (!editingCardsList || editingCardsList.length === 0) {
+      alert("請先挑選照片或新增步驟卡片！");
+      return;
+    }
+    const total = editingCardsList.length;
+    editingCardsList.forEach((c, i) => {
+      c.hint = `${getConnectorWord(i + 1, total)}，${c.text.trim() || '步驟' + (i + 1)}`;
+    });
+    renderEditingCardsGrid();
+  }
+
+  function getLibrary() {
+    return JSON.parse(localStorage.getItem('seq_game_library') || '[]');
+  }
+  function saveLibrary(lib) {
+    localStorage.setItem('seq_game_library', JSON.stringify(lib));
+  }
+
+  function bootstrap() {
+    detectEnvironment();
+    const lib = getLibrary();
+    if (lib && lib.length > 0) {
+      loadLesson(lib[0]);
+    } else {
+      showEmptyGuide();
+    }
+  }
+
+  function showEmptyGuide() {
+    currentLesson = null;
+    document.getElementById('emptyGuideScreen').style.display = 'flex';
+    document.getElementById('currentLessonTitle').innerText = '尚未載入練習';
+    document.getElementById('hintControlBar').style.display = 'none';
+    document.getElementById('shuffleArea').innerHTML = '';
+    document.getElementById('flowCanvas').innerHTML = '';
+    document.getElementById('toggleConnectiveBtn').style.display = 'none';
+    hideHintBanner();
+    const checkBtn = document.getElementById('checkAnswerBtn');
+    if (checkBtn) {
+      checkBtn.disabled = true;
+      checkBtn.style.opacity = '0.5';
+    }
+  }
+
+  function loadLesson(lesson) {
+    currentLesson = JSON.parse(JSON.stringify(lesson));
+    document.getElementById('emptyGuideScreen').style.display = 'none';
+    
+    resetControlBarToCheckMode();
+    const checkBtn = document.getElementById('checkAnswerBtn');
+    if (checkBtn) {
+      checkBtn.disabled = false;
+      checkBtn.style.opacity = '1';
+    }
+
+    document.getElementById('currentLessonTitle').innerText = `${currentLesson.title} (${currentLesson.cards.length}步)`;
+    
+    document.getElementById('hintControlBar').style.display = 'flex';
+    hideHintBanner();
+
+    applyDefaultLayoutMode();
+    detectImageAspectRatio(() => {
+      initGame();
+    });
+  }
+
+  function initGame() {
+    if (!currentLesson) return;
+
+    isGameFinishedAndCorrect = false;
+    isConnectivesActive = false;
+    stopUrgentFlash();
+    resetControlBarToCheckMode();
+    
+    const connectiveBtn = document.getElementById('toggleConnectiveBtn');
+    connectiveBtn.style.display = 'none';
+    connectiveBtn.innerHTML = "🔗 加入時序連接詞";
+    connectiveBtn.classList.remove('active');
+
+    renderSlots(false);
+    renderShuffledCards();
+    startTimerIfEnabled();
+  }
+
+  function renderSlots(preserveCards = false) {
+    if (!currentLesson) return;
+    const canvas = document.getElementById('flowCanvas');
+    if (!canvas) return;
+
+    const existingCardsMap = {};
+    if (preserveCards) {
+      document.querySelectorAll('.slot').forEach(slot => {
+        const cardEl = slot.querySelector('.card-item');
+        if (cardEl) {
+          existingCardsMap[slot.dataset.targetIndex] = {
+            element: cardEl,
+            borderColor: slot.style.borderColor
+          };
+        }
+      });
+    }
+
+    canvas.innerHTML = '';
+    const total = currentLesson.cards.length;
+    const isTwoRow = (flowLayoutMode === 'twoRow' && total >= 3);
+
+    if (!isTwoRow) {
+      const optSize = getOptimalSlotDimensions(total, false);
+      const row = document.createElement('div');
+      row.className = 'flow-row';
+
+      for (let i = 1; i <= total; i++) {
+        row.appendChild(createSlotNode(i, optSize, existingCardsMap[i]));
+        if (i < total) row.appendChild(createArrowNode());
+      }
+      canvas.appendChild(row);
+    } else {
+      const row1Count = Math.ceil(total / 2);
+      const maxCol = Math.max(row1Count, total - row1Count);
+      const optSize = getOptimalSlotDimensions(maxCol, true);
+
+      // 第一排
+      const row1 = document.createElement('div');
+      row1.className = 'flow-row';
+      for (let i = 1; i <= row1Count; i++) {
+        row1.appendChild(createSlotNode(i, optSize, existingCardsMap[i]));
+        if (i < row1Count) row1.appendChild(createArrowNode());
+      }
+      canvas.appendChild(row1);
+
+      // 轉折箭頭
+      const turnBar = document.createElement('div');
+      turnBar.className = 'turn-indicator-bar';
+      turnBar.innerHTML = `<span>⤵</span>`;
+      canvas.appendChild(turnBar);
+
+      // 第二排
+      const row2 = document.createElement('div');
+      row2.className = 'flow-row';
+      for (let i = row1Count + 1; i <= total; i++) {
+        row2.appendChild(createSlotNode(i, optSize, existingCardsMap[i]));
+        if (i < total) row2.appendChild(createArrowNode());
+      }
+      canvas.appendChild(row2);
+    }
+  }
+
+  function createSlotNode(stepNum, optSize, restoredCardData = null) {
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.dataset.targetIndex = stepNum;
+    if (optSize) {
+      slot.style.width = `${optSize.width}px`;
+      slot.style.height = `${optSize.height}px`;
+    }
+    slot.innerHTML = `<div class="slot-number">${stepNum}</div>`;
+    slot.ondragover = allowDrop;
+    slot.ondrop = drop;
+
+    if (restoredCardData && restoredCardData.element) {
+      slot.appendChild(restoredCardData.element);
+      if (restoredCardData.borderColor) {
+        slot.style.borderColor = restoredCardData.borderColor;
+      }
+    }
+
+    return slot;
+  }
+
+  function createArrowNode() {
+    const arrow = document.createElement('div');
+    arrow.className = 'arrow-node';
+    arrow.innerHTML = '➔';
+    return arrow;
+  }
+
+  function renderShuffledCards() {
+    if (!currentLesson) return;
+    const shuffleArea = document.getElementById('shuffleArea');
+    shuffleArea.innerHTML = '';
+    const shuffled = [...currentLesson.cards].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach(card => {
+      const el = createCardElement(card, false);
+      shuffleArea.appendChild(el);
+    });
+  }
+
+  function createCardElement(card, inSlot = false, slotStep = 1) {
+    const el = document.createElement('div');
+    el.className = 'card-item';
+    el.id = `card-${card.id}`;
+    el.draggable = true;
+    el.dataset.id = card.id;
+
+    const displayHtml = getCardDisplayHTML(card, inSlot, slotStep);
+    const plainText = getCardPlainText(card, inSlot, slotStep);
+    const hasImage = !!(card.img && card.img.trim());
+
+    if (hasImage) {
+      el.innerHTML = `
+        <div class="card-img-container">
+          <img src="${card.img}" class="card-img" alt="${card.text}">
+          <button class="card-quick-zoom-btn" title="放大看圖" onclick="triggerZoom(${card.id}, event)">🔍</button>
+        </div>
+        <div class="card-caption-box" id="caption-${card.id}">${displayHtml}</div>
+        <div class="card-tools">
+          <button class="tool-btn" title="朗讀" onclick="speakText(event, '${plainText}')">🔊</button>
+          <button class="tool-btn" title="放大" onclick="triggerZoom(${card.id}, event)">🔍</button>
+        </div>
+      `;
+    } else {
+      const dynamicFontSize = computeDynamicFontSize(card.text, inSlot);
+      el.innerHTML = `
+        <div class="text-card-body">
+          <div class="text-card-content" id="caption-${card.id}" style="font-size: ${dynamicFontSize};">${displayHtml}</div>
+        </div>
+        <div class="card-tools">
+          <button class="tool-btn" title="朗讀" onclick="speakText(event, '${plainText}')">🔊</button>
+          <button class="tool-btn" title="放大" onclick="triggerZoom(${card.id}, event)">🔍</button>
+        </div>
+      `;
+    }
+
+    let pressTimer = null;
+    let isLongPress = false;
+
+    el.addEventListener('touchstart', (e) => {
+      isLongPress = false;
+      pressTimer = setTimeout(() => {
+        isLongPress = true;
+        triggerZoom(card.id, e);
+      }, 420);
+    }, { passive: true });
+
+    el.addEventListener('touchend', () => clearTimeout(pressTimer));
+    el.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+    el.ondragstart = (e) => {
+      playCardMoveSound();
+      draggedCardId = el.id;
+      e.dataTransfer.setData('text', el.id);
+    };
+
+    el.onclick = (e) => {
+      if (isLongPress) return;
+      if (e.target.tagName === 'BUTTON' || e.target.classList.contains('card-quick-zoom-btn')) return;
+      playCardMoveSound();
+
+      if (el.parentElement.classList.contains('slot')) {
+        document.getElementById('shuffleArea').appendChild(el);
+      } else {
+        const emptySlot = [...document.querySelectorAll('.slot')].find(s => s.querySelectorAll('.card-item').length === 0);
+        if (emptySlot) emptySlot.appendChild(el);
+      }
+      refreshSlotCaptions();
+    };
+
+    return el;
+  }
+
+  function refreshSlotCaptions() {
+    if (!currentLesson) return;
+    document.querySelectorAll('.slot').forEach(slot => {
+      const cardEl = slot.querySelector('.card-item');
+      if (cardEl) {
+        const cardId = parseInt(cardEl.dataset.id);
+        const card = currentLesson.cards.find(c => c.id === cardId);
+        const step = parseInt(slot.dataset.targetIndex);
+        const captionBox = cardEl.querySelector(`#caption-${cardId}`);
+        if (captionBox && card) {
+          captionBox.innerHTML = getCardDisplayHTML(card, true, step);
+          if (!card.img || !card.img.trim()) {
+            captionBox.style.fontSize = computeDynamicFontSize(card.text, true);
+          }
+        }
+      }
+    });
+
+    document.querySelectorAll('#shuffleArea .card-item').forEach(cardEl => {
+      const cardId = parseInt(cardEl.dataset.id);
+      const card = currentLesson.cards.find(c => c.id === cardId);
+      const captionBox = cardEl.querySelector(`#caption-${cardId}`);
+      if (captionBox && card) {
+        captionBox.innerHTML = card.text;
+        if (!card.img || !card.img.trim()) {
+          captionBox.style.fontSize = computeDynamicFontSize(card.text, false);
+        }
+      }
+    });
+  }
+
+  function allowDrop(e) { e.preventDefault(); }
+  function drop(e) {
+    e.preventDefault();
+    const target = e.currentTarget;
+    const cardEl = document.getElementById(draggedCardId);
+    if (!cardEl) return;
+
+    playCardMoveSound();
+
+    if (target.classList.contains('slot')) {
+      const existing = target.querySelector('.card-item');
+      if (existing) cardEl.parentElement.appendChild(existing);
+      target.appendChild(cardEl);
+    } else if (target.id === 'shuffleArea') {
+      target.appendChild(cardEl);
+    }
+    refreshSlotCaptions();
+  }
+
+  function checkAnswer() {
+    if (!currentLesson) return;
+    const slots = document.querySelectorAll('.slot');
+    let allFilled = true;
+    let isCorrect = true;
+
+    slots.forEach(slot => {
+      const card = slot.querySelector('.card-item');
+      const step = parseInt(slot.dataset.targetIndex);
+      if (!card) {
+        allFilled = false;
+        slot.style.borderColor = 'var(--card-border)';
+      } else {
+        if (parseInt(card.dataset.id) === step) {
+          slot.style.borderColor = 'var(--success)';
+        } else {
+          slot.style.borderColor = 'var(--danger)';
+          isCorrect = false;
+        }
+      }
+    });
+
+    if (!allFilled) {
+      alert("還有步驟未放上卡片喔！");
+      return;
+    }
+
+    if (isCorrect) {
+      isGameFinishedAndCorrect = true;
+      stopTimer();
+      stopUrgentFlash();
+
+      if (window.confetti) {
+        try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch (e) {}
+      }
+
+      let praiseText = "做得好! 排序正確啦!";
+      const timerActive = document.getElementById('timerEnableCheck').checked;
+      if (timerActive && timerRemainingSeconds > 0) {
+        praiseText = "做得好! 你排得又快又正確!";
+      }
+      speakText(null, praiseText);
+
+      const connectiveBtn = document.getElementById('toggleConnectiveBtn');
+      connectiveBtn.style.display = 'inline-flex';
+      replaceBottomControlBar();
+    } else {
+      speakText(null, "有啲卡排錯左，你再試下啦！");
+      alert("❌ 有啲卡排錯左，你再試下啦！");
+    }
+  }
+
+  function replaceBottomControlBar() {
+    const bar = document.getElementById('bottomControlBar');
+    if (bar) {
+      bar.innerHTML = `
+        <button class="btn btn-primary btn-check" onclick="readFullSequence()">🔊 朗讀程序</button>
+        <button class="btn btn-success btn-check" onclick="nextLesson()">➡️ 新練習</button>
+      `;
+    }
+  }
+
+  function resetControlBarToCheckMode() {
+    const bar = document.getElementById('bottomControlBar');
+    if (bar) {
+      bar.innerHTML = `
+        <button class="btn btn-success btn-check" id="checkAnswerBtn" onclick="checkAnswer()">排好了 (檢查)</button>
+      `;
+    }
+  }
+
+  function toggleConnectives() {
+    playCardMoveSound();
+    isConnectivesActive = !isConnectivesActive;
+    const btn = document.getElementById('toggleConnectiveBtn');
+    if (isConnectivesActive) {
+      btn.innerHTML = "✓ 已加入時序連接詞";
+      btn.classList.add('active');
+    } else {
+      btn.innerHTML = "🔗 加入時序連接詞";
+      btn.classList.remove('active');
+    }
+    refreshSlotCaptions();
+  }
+
+  function readFullSequence() {
+    const cardsInOrder = [];
+    document.querySelectorAll('.slot').forEach(slot => {
+      const cardEl = slot.querySelector('.card-item');
+      if (cardEl) {
+        const step = parseInt(slot.dataset.targetIndex);
+        const cardId = parseInt(cardEl.dataset.id);
+        const card = currentLesson.cards.find(c => c.id === cardId);
+        cardsInOrder.push({ el: cardEl, step, card });
+      }
+    });
+
+    cardsInOrder.sort((a, b) => a.step - b.step);
+
+    let index = 0;
+    function readNext() {
+      if (index >= cardsInOrder.length) {
+        cardsInOrder.forEach(item => item.el.classList.remove('reading-highlight'));
+        return;
+      }
+      cardsInOrder.forEach(item => item.el.classList.remove('reading-highlight'));
+      const current = cardsInOrder[index];
+      current.el.classList.add('reading-highlight');
+
+      const text = getCardPlainText(current.card, true, current.step);
+      speakText(null, text, () => {
+        index++;
+        setTimeout(readNext, 350);
+      });
+    }
+    readNext();
+  }
+
+  function triggerZoom(cardId, e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    playCardMoveSound();
+    const card = currentLesson.cards.find(c => c.id === cardId);
+    if (!card) return;
+
+    currentZoomStep = card.id;
+    updateZoomView();
+    document.getElementById('zoomModal').style.display = 'flex';
+  }
+
+  function updateZoomView() {
+    const card = currentLesson.cards.find(c => c.id === currentZoomStep);
+    if (!card) return;
+
+    const zoomImg = document.getElementById('zoomImg');
+    const zoomText = document.getElementById('zoomText');
+    const displayHtml = getCardDisplayHTML(card, true, card.id);
+
+    if (card.img && card.img.trim()) {
+      zoomImg.style.display = 'block';
+      zoomImg.src = card.img;
+      zoomText.style.fontSize = 'clamp(1rem, 1.8vw, 1.35rem)';
+      zoomText.style.padding = '0';
+    } else {
+      zoomImg.style.display = 'none';
+      zoomText.style.fontSize = 'clamp(2rem, 5vw, 3.8rem)';
+      zoomText.style.padding = '40px 15px';
+    }
+    zoomText.innerHTML = displayHtml;
+
+    const prevBtn = document.getElementById('zoomPrevBtn');
+    const nextBtn = document.getElementById('zoomNextBtn');
+    const notice = document.getElementById('zoomLockNotice');
+
+    if (isGameFinishedAndCorrect) {
+      prevBtn.style.display = 'flex';
+      nextBtn.style.display = 'flex';
+      notice.style.display = 'none';
+      prevBtn.disabled = (currentZoomStep === 1);
+      nextBtn.disabled = (currentZoomStep === currentLesson.cards.length);
+    } else {
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      notice.style.display = 'block';
+    }
+  }
+
+  function navigateZoom(direction) {
+    if (!isGameFinishedAndCorrect) return;
+    playCardMoveSound();
+    const target = currentZoomStep + direction;
+    if (target >= 1 && target <= currentLesson.cards.length) {
+      currentZoomStep = target;
+      updateZoomView();
+    }
+  }
+
+  function speakCurrentZoomText() {
+    const card = currentLesson.cards.find(c => c.id === currentZoomStep);
+    if (card) {
+      const text = getCardPlainText(card, true, card.id);
+      speakText(null, text);
+    }
+  }
+
+  function closeZoomModal() {
+    document.getElementById('zoomModal').style.display = 'none';
+  }
+
+  // 計時器
+  function toggleTimerSettings() {
+    const enabled = document.getElementById('timerEnableCheck').checked;
+    const badge = document.getElementById('timerDisplayBadge');
+    if (enabled) {
+      badge.style.display = 'inline-block';
+      resetTimer();
+    } else {
+      badge.style.display = 'none';
+      stopTimer();
+      stopUrgentFlash();
+    }
+  }
+
+  function resetTimer() {
+    stopTimer();
+    stopUrgentFlash();
+    timerRemainingSeconds = 60;
+    updateTimerDisplay();
+    startTimerIfEnabled();
+  }
+
+  function startTimerIfEnabled() {
+    stopTimer();
+    const enabled = document.getElementById('timerEnableCheck').checked;
+    if (!enabled) return;
+
+    isTimerRunning = true;
+    timerInterval = setInterval(() => {
+      timerRemainingSeconds--;
+      updateTimerDisplay();
+
+      if (timerRemainingSeconds <= 5 && timerRemainingSeconds > 0) {
+        document.body.classList.add('urgent-flash');
+      }
+
+      if (timerRemainingSeconds <= 0) {
+        stopTimer();
+        stopUrgentFlash();
+        speakText(null, "夠鐘啦! 未排好, 可以再試過!");
+        alert("⏰ 夠鐘啦！未排好，可以再試過！");
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    isTimerRunning = false;
+  }
+
+  function stopUrgentFlash() {
+    document.body.classList.remove('urgent-flash');
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timerRemainingSeconds / 60).toString().padStart(2, '0');
+    const s = (timerRemainingSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timerDisplayBadge').innerText = `${m}:${s}`;
+  }
+
+  function nextLesson() {
+    playCardMoveSound();
+    const lib = getLibrary();
+    if (!lib || lib.length === 0) {
+      showEmptyGuide();
+      return;
+    }
+
+    if (lib.length === 1) {
+      initGame();
+      return;
+    }
+
+    let currentIndex = -1;
+    if (currentLesson && currentLesson.id) {
+      currentIndex = lib.findIndex(item => item.id === currentLesson.id);
+    }
+    const nextIndex = (currentIndex + 1) % lib.length;
+    loadLesson(lib[nextIndex]);
+  }
+
+  function exportJSON() {
+    if (!currentLesson) {
+      alert("目前尚未有可匯出的練習題！");
+      return;
+    }
+    try {
+      const jsonStr = JSON.stringify(currentLesson, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentLesson.title}.json`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 300);
+    } catch (err) {
+      alert("匯出失敗：" + err);
+    }
+  }
+
+  function openImportModal() {
+    document.getElementById('importFileInput').value = '';
+    document.getElementById('importModal').style.display = 'flex';
+  }
+  function closeImportModal() {
+    stopQrScanner();
+    document.getElementById('importModal').style.display = 'none';
+  }
+
+  function startQrScanner() {
+    const container = document.getElementById('qrReaderContainer');
+    const startBtn = document.getElementById('startScanBtn');
+    container.style.display = 'block';
+    startBtn.style.display = 'none';
+
+    if (!window.Html5Qrcode) {
+      alert("相機掃碼模組尚未載入完成，請確認連線後重試！");
+      stopQrScanner();
+      return;
+    }
+
+    try {
+      html5QrScanner = new Html5Qrcode("qrReader");
+      html5QrScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          stopQrScanner();
+          const text = decodedText.trim();
+          if (text.startsWith('http://') || text.startsWith('https://')) {
+            fetch(text).then(r => r.json()).then(j => processImportedData(JSON.stringify(j))).catch(e => alert("載入失敗：" + e));
+          } else {
+            processImportedData(text);
+          }
+        },
+        () => {}
+      ).catch(err => {
+        alert("無法啟動相機：" + err);
+        stopQrScanner();
+      });
+    } catch(e) {
+      alert("啟動相機時發生錯誤：" + e);
+      stopQrScanner();
+    }
+  }
+
+  function stopQrScanner() {
+    if (html5QrScanner) {
+      try {
+        html5QrScanner.stop().then(() => {
+          html5QrScanner.clear();
+          html5QrScanner = null;
+        }).catch(() => { html5QrScanner = null; });
+      } catch (e) {
+        html5QrScanner = null;
+      }
+    }
+    document.getElementById('qrReaderContainer').style.display = 'none';
+    document.getElementById('startScanBtn').style.display = 'inline-block';
+  }
+
+  function importByFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) { processImportedData(evt.target.result); };
+    reader.readAsText(file);
+  }
+
+  function processImportedData(jsonText) {
+    try {
+      const imported = JSON.parse(jsonText);
+      if (!imported.title || !imported.cards || !Array.isArray(imported.cards)) throw new Error();
+      imported.id = 'imported_' + Date.now();
+      let lib = getLibrary();
+      lib.unshift(imported);
+      saveLibrary(lib);
+      loadLesson(imported);
+      closeImportModal();
+      alert(`🎉 成功載入練習「${imported.title}」！`);
+    } catch (err) {
+      alert("❌ 匯入失敗：內容格式不正確！");
+    }
+  }
+
+  function openCropperInstance(imageSrc) {
+    const imgEl = document.getElementById('cropperTargetImg');
+    imgEl.src = imageSrc;
+    document.getElementById('cropperModal').style.display = 'flex';
+
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(imgEl, {
+      viewMode: 1,
+      dragMode: 'move',
+      autoCropArea: 0.85,
+      restore: false,
+      guides: true,
+      center: true,
+      highlight: false,
+      cropBoxMovable: true,
+      cropBoxResizable: true,
+      toggleDragModeOnDblclick: false
+    });
+  }
+
+  function closeCropperModal() {
+    document.getElementById('cropperModal').style.display = 'none';
+    if (cropper) { cropper.destroy(); cropper = null; }
+    if (isBatchCropping) {
+      isBatchCropping = false;
+      batchCropQueue = [];
+      renderEditingCardsGrid();
+    }
+  }
+
+  function compressFullImage(src, callback) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxDim = 450;
+      let w = img.width, h = img.height;
+      if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; }
+      else if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = src;
+  }
+
+  function applyCroppedImage() {
+    if (!cropper) return;
+    const canvas = cropper.getCroppedCanvas({ maxWidth: 450, maxHeight: 450 });
+    const base64 = canvas.toDataURL('image/jpeg', 0.82);
+
+    if (isBatchCropping) {
+      const item = batchCropQueue[currentQueueIndex];
+      editingCardsList.push({
+        id: editingCardsList.length + 1,
+        text: item.defaultName,
+        hint: "",
+        img: base64
+      });
+      currentQueueIndex++;
+      openCropModalForQueueItem(currentQueueIndex);
+    } else if (singleCropCardIndex !== null && editingCardsList[singleCropCardIndex]) {
+      editingCardsList[singleCropCardIndex].img = base64;
+      closeCropperModal();
+      renderEditingCardsGrid();
+    } else {
+      closeCropperModal();
+    }
+  }
+
+  function applyFullImage() {
+    compressFullImage(rawUploadedImageSrc, (fullBase64) => {
+      if (isBatchCropping) {
+        const item = batchCropQueue[currentQueueIndex];
+        editingCardsList.push({
+          id: editingCardsList.length + 1,
+          text: item.defaultName,
+          hint: "",
+          img: fullBase64
+        });
+        currentQueueIndex++;
+        openCropModalForQueueItem(currentQueueIndex);
+      } else if (singleCropCardIndex !== null && editingCardsList[singleCropCardIndex]) {
+        editingCardsList[singleCropCardIndex].img = fullBase64;
+        closeCropperModal();
+        renderEditingCardsGrid();
+      } else {
+        closeCropperModal();
+      }
+    });
+  }
+
+  function applyAllRemainingFull() {
+    if (!isBatchCropping) return;
+    const remaining = batchCropQueue.length - currentQueueIndex;
+    if (remaining <= 0) {
+      closeCropperModal();
+      renderEditingCardsGrid();
+      return;
+    }
+
+    let processed = 0;
+    for (let i = currentQueueIndex; i < batchCropQueue.length; i++) {
+      const item = batchCropQueue[i];
+      compressFullImage(item.src, (fullBase64) => {
+        editingCardsList.push({
+          id: editingCardsList.length + 1,
+          text: item.defaultName,
+          hint: "",
+          img: fullBase64
+        });
+        processed++;
+        if (processed === remaining) {
+          isBatchCropping = false;
+          batchCropQueue = [];
+          closeCropperModal();
+          renderEditingCardsGrid();
+        }
+      });
+    }
+  }
+
+  function startBatchCropProcess() {
+    if (!batchCropQueue || batchCropQueue.length === 0) return;
+    isBatchCropping = true;
+    singleCropCardIndex = null;
+    currentQueueIndex = 0;
+    openCropModalForQueueItem(currentQueueIndex);
+  }
+
+  function openCropModalForQueueItem(index) {
+    if (index >= batchCropQueue.length) {
+      isBatchCropping = false;
+      batchCropQueue = [];
+      closeCropperModal();
+      renderEditingCardsGrid();
+      return;
+    }
+
+    const item = batchCropQueue[index];
+    rawUploadedImageSrc = item.src;
+
+    const modalTitle = document.getElementById('cropperModalTitle');
+    if (modalTitle) {
+      modalTitle.innerText = `✂️ 裁切圖片 (${index + 1} / ${batchCropQueue.length}) - 可選局部或全張`;
+    }
+
+    const skipAllBtn = document.getElementById('cropperSkipAllBtn');
+    if (skipAllBtn) {
+      skipAllBtn.style.display = (batchCropQueue.length - index > 1) ? 'inline-flex' : 'none';
+    }
+
+    openCropperInstance(item.src);
+  }
+
+  function handleBatchImages(event) {
+    const files = Array.from(event.target.files);
+    if (!files || files.length === 0) return;
+
+    const availableSlots = 10 - editingCardsList.length;
+    if (availableSlots <= 0) {
+      alert("目前已經達到上限 10 張卡片，請先刪除部分卡片再加入！");
+      event.target.value = "";
+      return;
+    }
+
+    const filesToLoad = files.slice(0, availableSlots);
+    if (files.length > availableSlots) {
+      alert(`已為您選取前 ${availableSlots} 張照片（排序練習最多支援 10 張）。`);
+    }
+
+    batchCropQueue = [];
+    let loadedCount = 0;
+
+    filesToLoad.forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        batchCropQueue[idx] = {
+          file: file,
+          src: e.target.result,
+          defaultName: file.name.replace(/\.[^/.]+$/, "") || `步驟 ${editingCardsList.length + idx + 1}`
+        };
+        loadedCount++;
+        if (loadedCount === filesToLoad.length) {
+          batchCropQueue = batchCropQueue.filter(Boolean);
+          startBatchCropProcess();
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    event.target.value = "";
+  }
+
+  function openCropForExistingCard(index) {
+    const card = editingCardsList[index];
+    if (!card || !card.img) return;
+
+    isBatchCropping = false;
+    singleCropCardIndex = index;
+    rawUploadedImageSrc = card.img;
+
+    const modalTitle = document.getElementById('cropperModalTitle');
+    if (modalTitle) {
+      modalTitle.innerText = `✂️ 重新裁切步驟 ${index + 1} 圖片`;
+    }
+    const skipAllBtn = document.getElementById('cropperSkipAllBtn');
+    if (skipAllBtn) skipAllBtn.style.display = 'none';
+
+    openCropperInstance(card.img);
+  }
+
+  function handleReplaceCardImage(event, index) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      isBatchCropping = false;
+      singleCropCardIndex = index;
+      rawUploadedImageSrc = e.target.result;
+
+      const modalTitle = document.getElementById('cropperModalTitle');
+      if (modalTitle) {
+        modalTitle.innerText = `✂️ 設定步驟 ${index + 1} 圖片 - 可選局部或全張`;
+      }
+      const skipAllBtn = document.getElementById('cropperSkipAllBtn');
+      if (skipAllBtn) skipAllBtn.style.display = 'none';
+
+      openCropperInstance(rawUploadedImageSrc);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
+
+  // ---------------- 製作/編輯彈窗 ---------------- //
+  function openEditModal() {
+    document.getElementById('lessonTitleInput').value = currentLesson ? currentLesson.title : "自訂排序練習";
+    document.getElementById('lessonScriptInput').value = (currentLesson && currentLesson.script) ? currentLesson.script : "";
+    
+    if (currentLesson && currentLesson.cards) {
+      editingCardsList = JSON.parse(JSON.stringify(currentLesson.cards));
+    } else {
+      editingCardsList = [];
+    }
+    
+    renderEditingCardsGrid();
+    document.getElementById('editModal').style.display = 'flex';
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+  }
+
+  function clearAllEditCards() {
+    if (confirm("確定要清空目前所有步驟嗎？")) {
+      editingCardsList = [];
+      renderEditingCardsGrid();
+    }
+  }
+
+  function addNewTextOnlyCard() {
+    if (editingCardsList.length >= 10) {
+      alert("目前已經達到上限 10 個步驟囉！");
+      return;
+    }
+    const nextIdx = editingCardsList.length + 1;
+    editingCardsList.push({
+      id: nextIdx,
+      text: `步驟 ${nextIdx}`,
+      hint: "",
+      img: ""
+    });
+    renderEditingCardsGrid();
+  }
+
+  function renderEditingCardsGrid() {
+    const container = document.getElementById('editCardsContainer');
+    document.getElementById('editCardsCount').innerText = editingCardsList.length;
+    container.innerHTML = '';
+
+    if (editingCardsList.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; color: #94A3B8; padding: 24px;">
+          尚未加入任何步驟。<br>請點選上方按鈕<b>挑選照片 (可裁切)</b> 或 <b>新增純文字卡</b>！
+        </div>`;
+      return;
+    }
+
+    editingCardsList.forEach((card, idx) => {
+      card.id = idx + 1;
+      const cardEl = document.createElement('div');
+      cardEl.className = 'edit-card-item';
+
+      const hasImg = !!(card.img && card.img.trim());
+      const thumbHtml = hasImg
+        ? `<img class="edit-card-thumb" src="${card.img}">`
+        : `<div class="edit-card-thumb text-thumb-placeholder">📝 純文字卡</div>`;
+
+      cardEl.innerHTML = `
+        <div class="edit-step-badge">${idx + 1}</div>
+        <button class="edit-card-del" title="刪除此張" onclick="deleteEditCard(${idx})">✕</button>
+        ${thumbHtml}
+        
+        <div style="display:flex; gap:4px; width:100%; justify-content:center;">
+          ${hasImg ? `<button class="btn btn-outline" style="padding:1px 5px; font-size:10px;" onclick="openCropForExistingCard(${idx})">✂️ 裁切</button>` : ''}
+          <button class="btn btn-outline" style="padding:1px 5px; font-size:10px;" onclick="document.getElementById('replaceInput_${idx}').click()">🖼️ 換圖</button>
+          <input type="file" id="replaceInput_${idx}" accept="image/*" style="display:none;" onchange="handleReplaceCardImage(event, ${idx})">
+        </div>
+
+        <input type="text" value="${card.text || ''}" placeholder="卡片名稱 (如: 起床)" 
+               style="width: 100%; font-size: 11px; padding: 2px 4px; border: 1px solid #CBD5E1; border-radius: 4px; text-align: center; font-weight: bold;"
+               oninput="editingCardsList[${idx}].text = this.value">
+
+        <input type="text" value="${card.hint || ''}" placeholder="💡 提示詞 (如: 首先起床)" 
+               style="width: 100%; font-size: 10.5px; padding: 2px 4px; border: 1px dashed #818CF8; border-radius: 4px; text-align: center; color: #3730A3; background: #EEF2FF;"
+               title="針對此步驟的自訂提示詞"
+               oninput="editingCardsList[${idx}].hint = this.value">
+
+        <div style="display: flex; gap: 4px; width: 100%;">
+          <button class="btn btn-outline" style="flex: 1; padding: 2px 4px; font-size: 10px;" onclick="moveEditCard(${idx}, -1)">◀ 前移</button>
+          <button class="btn btn-outline" style="flex: 1; padding: 2px 4px; font-size: 10px;" onclick="moveEditCard(${idx}, 1)">後移 ▶</button>
+        </div>
+      `;
+      container.appendChild(cardEl);
+    });
+  }
+
+  function deleteEditCard(index) {
+    editingCardsList.splice(index, 1);
+    renderEditingCardsGrid();
+  }
+
+  function moveEditCard(index, direction) {
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= editingCardsList.length) return;
+    const temp = editingCardsList[index];
+    editingCardsList[index] = editingCardsList[targetIdx];
+    editingCardsList[targetIdx] = temp;
+    renderEditingCardsGrid();
+  }
+
+  function saveEditedLesson() {
+    const title = document.getElementById('lessonTitleInput').value.trim() || "未命名排序練習";
+    const script = document.getElementById('lessonScriptInput').value.trim();
+
+    if (editingCardsList.length < 2) {
+      alert("排序練習至少需要 2 個步驟喔！");
+      return;
+    }
+
+    const finalCards = editingCardsList.map((c, i) => ({
+      id: i + 1,
+      text: c.text.trim() || `步驟 ${i + 1}`,
+      hint: (c.hint && c.hint.trim()) ? c.hint.trim() : "",
+      img: c.img || ""
+    }));
+
+    const updated = {
+      id: 'lesson_' + Date.now(),
+      title: title,
+      script: script,
+      cards: finalCards
+    };
+
+    let lib = getLibrary();
+    lib.unshift(updated);
+    saveLibrary(lib);
+
+    loadLesson(updated);
+    closeEditModal();
+  }
+
+  /* ---------------- 題庫與批次刪除功能 ---------------- */
+  function openLibraryModal() {
+    const lib = getLibrary();
+    const list = document.getElementById('libraryList');
+    const selectAllCheck = document.getElementById('selectAllLibCheck');
+    if (selectAllCheck) selectAllCheck.checked = false;
+
+    list.innerHTML = '';
+
+    if (lib.length === 0) {
+      list.innerHTML = '<div style="color:#64748B; text-align:center; padding: 20px;">目前練習庫是空的，請先製作或匯入教材！</div>';
+      document.getElementById('libModal').style.display = 'flex';
+      return;
+    }
+
+    lib.forEach((item, index) => {
+      const row = document.createElement('div');
+      row.className = 'lib-item';
+      row.innerHTML = `
+        <input type="checkbox" class="lib-item-check" data-index="${index}">
+        <div style="display:flex; flex-direction:column; flex:1; min-width:0;">
+          <span style="font-weight:bold; font-size:0.95rem; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.title}</span>
+          <span style="font-size:0.75rem; color:#64748B;">共 ${item.cards.length} 個步驟 ${item.script ? '· 包含背景導言' : ''}</span>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-success" style="padding:4px 9px; font-size:0.8rem;" onclick="selectFromLibrary(${index})">載入</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+    document.getElementById('libModal').style.display = 'flex';
+  }
+
+  function toggleSelectAllLibrary(isChecked) {
+    document.querySelectorAll('.lib-item-check').forEach(cb => {
+      cb.checked = isChecked;
+    });
+  }
+
+  function batchDeleteFromLibrary() {
+    const checks = document.querySelectorAll('.lib-item-check:checked');
+    if (checks.length === 0) {
+      alert("請先剔選要刪除的題目！");
+      return;
+    }
+
+    if (!confirm(`確定要一次過刪除所選取的 ${checks.length} 份練習嗎？此操作無法還原。`)) {
+      return;
+    }
+
+    const indicesToDelete = Array.from(checks).map(cb => parseInt(cb.dataset.index));
+    let lib = getLibrary();
+
+    // 由後往前刪除避免索引偏移
+    indicesToDelete.sort((a, b) => b - a).forEach(idx => {
+      lib.splice(idx, 1);
+    });
+
+    saveLibrary(lib);
+
+    if (lib.length === 0) {
+      showEmptyGuide();
+    } else if (currentLesson && !lib.some(item => item.id === currentLesson.id)) {
+      loadLesson(lib[0]);
+    }
+
+    openLibraryModal();
+  }
+
+  function selectFromLibrary(idx) {
+    const lib = getLibrary();
+    loadLesson(lib[idx]);
+    document.getElementById('libModal').style.display = 'none';
+  }
+
+  window.addEventListener('DOMContentLoaded', bootstrap);
+</script>
+</body>
+</html>
