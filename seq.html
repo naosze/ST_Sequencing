@@ -26,7 +26,6 @@
     --card-border: rgba(148, 163, 184, 0.6);
 
     --card-img-ratio: 1;
-    /* 預設左欄寬度，可由使用者自由拖拉覆蓋 */
     --left-panel-width: 120px;
   }
 
@@ -41,7 +40,6 @@
     overflow: hidden;
   }
 
-  /* 拖曳調整時禁止選取文字與反白 */
   body.resizing-active {
     user-select: none !important;
     cursor: col-resize !important;
@@ -202,12 +200,12 @@
   .guide-desc { font-size: clamp(0.85rem, 1.2vw, 1rem); color: #64748B; max-width: 480px; line-height: 1.5; margin-bottom: 24px; }
   .guide-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
-  /* ---------------- 【核心改善】：自由調整寬度的左欄與把手 ---------------- */
+  /* 左欄待選區 */
   .left-panel {
     flex: 0 0 auto;
     width: var(--left-panel-width);
     min-width: 65px;
-    max-width: 45vw;
+    max-width: 50vw;
     display: flex;
     flex-direction: column;
     overflow-y: scroll !important;
@@ -222,7 +220,40 @@
   .left-panel::-webkit-scrollbar-track { background: rgba(241, 245, 249, 0.6); border-radius: 4px; }
   .left-panel::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 4px; }
 
-  /* 自由調整分隔條 (Resizer Handle) */
+  .panel-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .panel-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #334155;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+  }
+
+  /* 頂部優雅小標記：不遮擋卡片 */
+  .drag-hint-badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #2563EB;
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    padding: 1px 5px;
+    border-radius: 6px;
+    margin-left: 4px;
+    letter-spacing: 0.2px;
+    user-select: none;
+  }
+
+  /* ---------------- 【核心修改】：極簡嵌入式分隔條 (零遮擋圖卡) ---------------- */
   .resizer-handle {
     width: 14px;
     flex-shrink: 0;
@@ -234,35 +265,74 @@
     justify-content: center;
     position: relative;
     z-index: 15;
-    margin: 0 2px;
-    transition: background-color 0.15s;
+    margin: 0 1px;
   }
-  .resizer-handle::before {
-    content: '';
-    width: 3px;
-    height: 40px;
-    background: #CBD5E1;
-    border-radius: 3px;
-    transition: 0.2s;
+  
+  .resizer-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background: rgba(203, 213, 225, 0.6);
+    border-radius: 2px;
+    transition: 0.15s;
   }
-  .resizer-handle:hover::before,
-  .resizer-handle.resizing::before {
-    background: var(--primary);
+
+  /* 頂部微定位針（在標題列高度，下方完全不遮擋） */
+  .resizer-top-pin {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748B;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 1px 4px;
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: 0.15s;
+  }
+
+  /* 中央微型磨砂防滑握柄：寬度僅 4px，高度 38px，絕不向左右突出 */
+  .resizer-grip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 4px;
-    height: 70%;
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    height: 38px;
+    background: #94A3B8;
+    border-radius: 4px;
+    transition: all 0.2s;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
   }
 
-  .panel-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    flex-shrink: 0;
+  .resizer-handle:hover .resizer-line,
+  .resizer-handle.resizing .resizer-line {
+    background: var(--primary);
+    width: 3px;
   }
-  .panel-title { font-size: 0.85rem; font-weight: bold; color: #334155; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .resizer-handle:hover .resizer-grip,
+  .resizer-handle.resizing .resizer-grip {
+    background: var(--primary);
+    height: 52px;
+    width: 5px;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+  }
+  .resizer-handle:hover .resizer-top-pin,
+  .resizer-handle.resizing .resizer-top-pin {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
 
-  /* 左欄待選區：寬度 100% 撐滿，卡片依左欄寬度即時縮放！ */
+  /* 左欄待選區 */
   .shuffle-area {
     display: flex;
     flex-direction: column;
@@ -272,6 +342,12 @@
     padding: 2px 2px 60px 2px;
     touch-action: pan-y !important;
     width: 100%;
+    transition: background-color 0.2s, outline 0.2s;
+  }
+  .shuffle-area.drop-hover {
+    background: rgba(219, 234, 254, 0.65) !important;
+    outline: 2px dashed var(--primary);
+    border-radius: 10px;
   }
   .shuffle-area .card-item {
     width: 100% !important;
@@ -279,7 +355,7 @@
     flex-shrink: 0;
   }
 
-  /* 右欄：彈性佔滿剩餘的所有大舞台空間 */
+  /* 右欄大舞台 */
   .right-panel {
     flex: 1 1 0;
     min-width: 0;
@@ -339,6 +415,7 @@
     padding: 0 4px;
   }
 
+  /* 支援長步驟橫向滾動而不擠壓 */
   .flow-canvas {
     flex: 1;
     height: 0;
@@ -349,13 +426,16 @@
     gap: 2px;
     padding: 2px 4px;
     width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .flow-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     flex: 0 0 auto;
     min-height: 0;
     gap: 6px;
@@ -403,7 +483,7 @@
     margin: 0 2px;
   }
 
-  /* 卡槽樣式 */
+  /* 卡槽樣式與拖曳高亮 */
   .slot {
     border: 2px dashed var(--card-border);
     border-radius: 12px;
@@ -414,8 +494,16 @@
     -webkit-backdrop-filter: blur(4px);
     box-sizing: border-box;
     flex-shrink: 0;
-    transition: width 0.1s, height 0.1s;
+    transition: width 0.1s, height 0.1s, transform 0.15s, background-color 0.15s, border-color 0.15s;
   }
+  .slot.drop-hover {
+    border-color: #3B82F6 !important;
+    background: rgba(219, 234, 254, 0.85) !important;
+    transform: scale(1.04);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+    z-index: 5;
+  }
+
   .slot-number {
     position: absolute;
     top: 4px;
@@ -447,17 +535,32 @@
     overflow: hidden;
     box-sizing: border-box;
     user-select: none;
+    -webkit-user-select: none;
     touch-action: pan-y !important;
     position: relative;
     box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  }
+  .card-item:active { cursor: grabbing; }
+
+  .card-item.is-touch-dragging {
+    opacity: 0.3 !important;
+    transform: scale(0.95);
+  }
+
+  .touch-drag-ghost {
+    position: fixed !important;
+    pointer-events: none !important;
+    z-index: 99999 !important;
+    transform: translate(-50%, -50%) rotate(2deg) scale(1.05);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.35) !important;
+    opacity: 0.95 !important;
+    transition: none !important;
   }
 
   .slot .card-item { width: 100%; height: 100%; }
   .card-item.reading-highlight { outline: 3px solid var(--warning); transform: scale(1.02); z-index: 10; }
-  .card-item:active { cursor: grabbing; }
 
-  /* 圖卡圖片區域 */
   .card-img-container {
     width: 100%;
     position: relative;
@@ -509,7 +612,6 @@
     flex: 1 1 auto;
   }
 
-  /* 時序連接詞樣式：放大 20% (1.2em)，彩色醒目 */
   .connective-tag {
     font-size: 1.22em;
     font-weight: 900;
@@ -602,7 +704,7 @@
     height: 94vh;
     height: 94dvh;
     max-height: 96dvh;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(255,255,255,0.15);
   }
 
@@ -652,7 +754,7 @@
   .zoom-nav-btn.next { right: 8px; }
   .zoom-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
 
-  /* 手機直向模式 (Portrait) 特殊適配 */
+  /* 手機直向模式特殊適配 */
   @media (max-width: 600px) and (orientation: portrait) {
     body { padding: 4px 6px; }
     header { margin-bottom: 3px; }
@@ -660,7 +762,8 @@
     .nav-btns .btn { padding: 4px 6px; font-size: 0.72rem; }
 
     .game-container { flex-direction: column; gap: 4px; padding: 6px 8px; }
-    .resizer-handle { display: none; } /* 手機直向隱藏拖曳條 */
+    .resizer-handle { display: none; }
+    .drag-hint-badge { display: none; }
     
     .left-panel {
       flex: 0 0 auto !important;
@@ -864,27 +967,32 @@
     </div>
     <div class="guide-actions">
       <button class="btn btn-success" style="font-size: 1.05rem; padding: 10px 24px;" onclick="openImportModal()">📥 立即匯入教材</button>
-      <button class="btn btn-outline" style="font-size: 1.05rem; padding: 10px 20px;" onclick="openEditModal()">✏️ 製作新題目 (最多10張)</button>
+      <button class="btn btn-outline" style="font-size: 1.05rem; padding: 10px 20px;" onclick="openEditModal()">✏️ 製作新題目</button>
     </div>
   </div>
 
-  <!-- 左：待選盤 (寬度可自訂拖拉，圖卡隨之自適應放大/縮小) -->
+  <!-- 左：待選盤 (標題旁加入輕量提示標籤) -->
   <div class="left-panel" id="leftPanel">
     <div class="panel-header-row">
-      <div class="panel-title">程序卡匣</div>
+      <div class="panel-title">
+        程序卡匣 <span class="drag-hint-badge">↔ 可拖拉調寬</span>
+      </div>
     </div>
     <div class="shuffle-area" id="shuffleArea" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
   </div>
 
-  <!-- 中間：拖曳寬度調節分隔條 (支援觸控與滑鼠拖曳，雙擊可還原) -->
-  <div class="resizer-handle" id="resizerHandle" title="左右拖動自訂卡匣寬度 (雙擊可還原預設)"></div>
+  <!-- 中間：極簡磨砂分隔握柄 (零遮擋圖卡，頂部微定位針) -->
+  <div class="resizer-handle" id="resizerHandle" title="左右拖動自訂卡匣寬度 (雙擊可還原預設)">
+    <div class="resizer-line"></div>
+    <div class="resizer-top-pin">◀ ↔ ▶</div>
+    <div class="resizer-grip"></div>
+  </div>
 
-  <!-- 右：大舞台流程區 (自動佔滿剩餘寬度) -->
+  <!-- 右：大舞台流程區 -->
   <div class="right-panel" id="rightPanel">
     <div class="panel-header-row">
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         <div class="panel-title">依次序排列程序圖</div>
-        <!-- 奪目的橙色時序連接詞按鈕 -->
         <button id="toggleConnectiveBtn" class="btn btn-connective-prominent" style="display: none;" onclick="toggleConnectives()">
           🔗 加入時序連接詞
         </button>
@@ -937,7 +1045,7 @@
   <button class="btn btn-success btn-check" id="checkAnswerBtn" onclick="checkAnswer()">排好了 (檢查)</button>
 </div>
 
-<!-- 放大檢視 Modal (極致滿版) -->
+<!-- 放大檢視 Modal -->
 <div class="modal-overlay" id="zoomModal">
   <div class="zoom-content-wrapper">
     <div class="zoom-img-container">
@@ -1006,7 +1114,7 @@
 <!-- 製作/編輯彈窗 -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-box">
-    <div class="modal-title">✏️ 製作/編輯排序卡 (最多10張)</div>
+    <div class="modal-title">✏️ 製作/編輯排序卡</div>
     
     <div style="margin-bottom: 8px;">
       <label><b>練習名稱：</b></label>
@@ -1024,20 +1132,20 @@
     <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
       <div class="batch-upload-zone" style="flex: 1; min-width: 170px;" onclick="document.getElementById('batchFileInput').click()">
         <span style="font-size: 1.3rem;">📸</span>
-        <b style="color: #1E293B; font-size: 0.85rem; display: block;">一次性挑選照片 (可裁切)</b>
-        <span style="font-size: 0.7rem; color: #64748B;">支援多選，依序選擇是否裁切</span>
+        <b style="color: #1E293B; font-size: 0.85rem; display: block;">挑選照片 (不設上限，可裁切)</b>
+        <span style="font-size: 0.7rem; color: #64748B;">支援一次多選，依序選擇是否裁切</span>
         <input type="file" id="batchFileInput" accept="image/*" multiple style="display:none;" onchange="handleBatchImages(event)">
       </div>
 
       <div class="batch-upload-zone" style="flex: 1; min-width: 170px; border-color: #10B981; background: #ECFDF5;" onclick="addNewTextOnlyCard()">
         <span style="font-size: 1.3rem;">📝</span>
         <b style="color: #065F46; font-size: 0.88rem; display: block;">新增純文字卡 (免圖片)</b>
-        <span style="font-size: 0.7rem; color: #047857;">直接打字，適合語文訓練</span>
+        <span style="font-size: 0.7rem; color: #047857;">直接打字，無數量上限</span>
       </div>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
-      <b>卡片步驟列表 (<span id="editCardsCount">0</span>/10 張)：</b>
+      <b>卡片步驟列表 (共 <span id="editCardsCount">0</span> 個步驟)：</b>
       <div style="display: flex; gap: 4px;">
         <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 7px; color: #4338CA; border-color: #C7D2FE; background: #EEF2FF;" onclick="autoFillAllCardHints()">
           ✨ 自動填入時序提示詞 (首先/跟住/最後)
@@ -1055,7 +1163,7 @@
   </div>
 </div>
 
-<!-- 練習庫彈窗 (支援批次剔選刪除) -->
+<!-- 練習庫彈窗 -->
 <div class="modal-overlay" id="libModal">
   <div class="modal-box">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
@@ -1123,7 +1231,7 @@
     }
 
     function onPointerDown(e) {
-      if (isMobilePortrait()) return; // 手機直向不啟用寬度調節
+      if (isMobilePortrait()) return;
       isResizing = true;
       document.body.classList.add('resizing-active');
       handle.classList.add('resizing');
@@ -1136,9 +1244,8 @@
       const containerRect = container.getBoundingClientRect();
       let newWidth = clientX - containerRect.left;
 
-      // 寬度安全範圍限制：最小 65px，最大佔容器的 48%
       const minW = 65;
-      const maxW = containerRect.width * 0.48;
+      const maxW = containerRect.width * 0.52;
 
       if (newWidth < minW) newWidth = minW;
       if (newWidth > maxW) newWidth = maxW;
@@ -1162,17 +1269,14 @@
       }
     }
 
-    // 滑鼠事件
     handle.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('mouseup', onPointerUp);
 
-    // 觸控事件 (支援 iPad / 觸控螢幕)
     handle.addEventListener('touchstart', onPointerDown, { passive: false });
     window.addEventListener('touchmove', onPointerMove, { passive: false });
     window.addEventListener('touchend', onPointerUp);
 
-    // 雙擊分隔條還原預設寬度
     handle.addEventListener('dblclick', () => {
       applyLeftPanelWidth(DEFAULT_LEFT_WIDTH);
       localStorage.removeItem('seq_left_panel_w');
@@ -1187,7 +1291,7 @@
     document.documentElement.style.setProperty('--left-panel-width', `${pxWidth}px`);
   }
 
-  // Web Audio API
+  // ---------------- Web Audio 音效強化 ---------------- //
   let audioCtx = null;
   function getAudioContext() {
     try {
@@ -1203,25 +1307,49 @@
     }
   }
 
-  function playCardMoveSound() {
+  function playCardPickSound() {
     try {
       const ctx = getAudioContext();
       if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       const now = ctx.currentTime;
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(210, now);
-      osc.frequency.exponentialRampToValueAtTime(125, now + 0.08);
 
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(0.16, now + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.085);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.07);
+
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.55, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.09);
+      osc.stop(now + 0.085);
+    } catch (e) {}
+  }
+
+  function playCardDropSound() {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(720, now);
+      osc.frequency.exponentialRampToValueAtTime(340, now + 0.09);
+
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.68, now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.095);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.1);
     } catch (e) {}
   }
 
@@ -1257,7 +1385,6 @@
     }
   }, 200));
 
-  /* 🚪 離開功能：清空當前所有卡片，返回引導頁讓用戶重新載入/匯入 */
   function exitCurrentLesson() {
     if (currentLesson) {
       if (!confirm("確定要離開目前練習嗎？這將會清空目前排好的卡片。")) {
@@ -1271,7 +1398,7 @@
   }
 
   function toggleCardCaptions() {
-    playCardMoveSound();
+    playCardPickSound();
     isCardCaptionHidden = !isCardCaptionHidden;
     document.body.classList.toggle('hide-card-captions', isCardCaptionHidden);
     
@@ -1373,7 +1500,7 @@
   }
 
   function cycleFlowLayoutMode() {
-    playCardMoveSound();
+    playCardPickSound();
     flowLayoutMode = (flowLayoutMode === 'single') ? 'twoRow' : 'single';
     updateLayoutButtonUI();
     renderSlots(true);
@@ -1424,13 +1551,12 @@
     const r = currentLessonAspectRatio || 1.0;
 
     let optW = Math.min(maxW, (maxH - footerH) * r);
-    optW = Math.max(mobile ? 70 : 55, optW);
+    optW = Math.max(mobile ? 68 : 50, optW);
     let optH = optW / r + footerH;
 
     return { width: Math.floor(optW), height: Math.floor(optH) };
   }
 
-  /* 時序連接詞定義與專屬色彩 */
   function getConnectorWord(stepIndex, totalSteps) {
     if (stepIndex === 1) return "首先";
     if (stepIndex === totalSteps) return "最後";
@@ -1444,16 +1570,15 @@
 
   function getConnectorWordColor(word) {
     switch(word) {
-      case "首先": return "#DC2626"; // 亮紅
-      case "跟住": return "#EA580C"; // 活力橙
-      case "然後": return "#2563EB"; // 皇家藍
-      case "之後": return "#059669"; // 寶石綠
-      case "最後": return "#9333EA"; // 尊貴紫
+      case "首先": return "#DC2626";
+      case "跟住": return "#EA580C";
+      case "然後": return "#2563EB";
+      case "之後": return "#059669";
+      case "最後": return "#9333EA";
       default: return "#D97706";
     }
   }
 
-  /* 返回卡片標題 HTML（放大 20% 並賦予專屬亮彩） */
   function getCardDisplayHTML(card, isInTargetSlot = false, slotStep = 1) {
     if (isInTargetSlot && isConnectivesActive) {
       const prefix = getConnectorWord(slotStep, currentLesson.cards.length);
@@ -1463,7 +1588,6 @@
     return card.text;
   }
 
-  /* 返回純文字（供語音朗讀） */
   function getCardPlainText(card, isInTargetSlot = false, slotStep = 1) {
     if (isInTargetSlot && isConnectivesActive) {
       const prefix = getConnectorWord(slotStep, currentLesson.cards.length);
@@ -1522,15 +1646,12 @@
     return `${getConnectorWord(stepNum, total)}，${card.text || '步驟' + stepNum}`;
   }
 
-  /* 💡 提示詞：若有開場背景文字稿，最先顯示並讀出它！ */
   function startProgressiveHint(mode) {
-    playCardMoveSound();
+    playCardPickSound();
     if (!currentLesson || !currentLesson.cards || currentLesson.cards.length === 0) return;
 
     progressiveHintMode = mode;
     const hasScriptIntro = !!(currentLesson.script && currentLesson.script.trim());
-    
-    // 如果有背景文字稿，從第 0 步 (前言) 開始；否則從第 1 步開始
     progressiveHintStep = hasScriptIntro ? 0 : 1;
     showCurrentProgressiveHint();
   }
@@ -1584,7 +1705,7 @@
   }
 
   function nextProgressiveHint() {
-    playCardMoveSound();
+    playCardPickSound();
     const total = currentLesson ? currentLesson.cards.length : 0;
     if (total === 0) return;
 
@@ -1609,7 +1730,7 @@
   }
 
   function autoFillAllCardHints() {
-    playCardMoveSound();
+    playCardPickSound();
     if (!editingCardsList || editingCardsList.length === 0) {
       alert("請先挑選照片或新增步驟卡片！");
       return;
@@ -1732,7 +1853,6 @@
       const maxCol = Math.max(row1Count, total - row1Count);
       const optSize = getOptimalSlotDimensions(maxCol, true);
 
-      // 第一排
       const row1 = document.createElement('div');
       row1.className = 'flow-row';
       for (let i = 1; i <= row1Count; i++) {
@@ -1741,13 +1861,11 @@
       }
       canvas.appendChild(row1);
 
-      // 轉折箭頭
       const turnBar = document.createElement('div');
       turnBar.className = 'turn-indicator-bar';
       turnBar.innerHTML = `<span>⤵</span>`;
       canvas.appendChild(turnBar);
 
-      // 第二排
       const row2 = document.createElement('div');
       row2.className = 'flow-row';
       for (let i = row1Count + 1; i <= total; i++) {
@@ -1799,6 +1917,125 @@
     });
   }
 
+  // ---------------- iPad / 手機 實體觸控拖曳 (Touch Drag & Drop) ---------------- //
+  function bindTouchDragEvents(cardEl, card) {
+    let startX = 0, startY = 0;
+    let isTouchDragging = false;
+    let ghostEl = null;
+    let pressTimer = null;
+    let currentHoverTarget = null;
+
+    cardEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 1) return;
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      isTouchDragging = false;
+
+      pressTimer = setTimeout(() => {
+        if (!isTouchDragging) {
+          triggerZoom(card.id, e);
+        }
+      }, 480);
+    }, { passive: true });
+
+    cardEl.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 1) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+
+      if (!isTouchDragging && (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8)) {
+        clearTimeout(pressTimer);
+        isTouchDragging = true;
+        playCardPickSound();
+
+        const rect = cardEl.getBoundingClientRect();
+        ghostEl = cardEl.cloneNode(true);
+        ghostEl.classList.add('touch-drag-ghost');
+        ghostEl.style.width = `${rect.width}px`;
+        ghostEl.style.height = `${rect.height}px`;
+        ghostEl.style.left = `${touch.clientX}px`;
+        ghostEl.style.top = `${touch.clientY}px`;
+        document.body.appendChild(ghostEl);
+
+        cardEl.classList.add('is-touch-dragging');
+      }
+
+      if (isTouchDragging && ghostEl) {
+        e.preventDefault();
+
+        ghostEl.style.left = `${touch.clientX}px`;
+        ghostEl.style.top = `${touch.clientY}px`;
+
+        ghostEl.style.visibility = 'hidden';
+        const elemUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+        ghostEl.style.visibility = 'visible';
+
+        document.querySelectorAll('.slot, #shuffleArea').forEach(el => el.classList.remove('drop-hover'));
+        currentHoverTarget = null;
+
+        if (elemUnder) {
+          const targetSlot = elemUnder.closest('.slot');
+          const targetShuffle = elemUnder.closest('#shuffleArea');
+
+          if (targetSlot) {
+            targetSlot.classList.add('drop-hover');
+            currentHoverTarget = targetSlot;
+          } else if (targetShuffle) {
+            targetShuffle.classList.add('drop-hover');
+            currentHoverTarget = targetShuffle;
+          }
+        }
+      }
+    }, { passive: false });
+
+    cardEl.addEventListener('touchend', (e) => {
+      clearTimeout(pressTimer);
+
+      if (isTouchDragging) {
+        isTouchDragging = false;
+        cardEl.classList.remove('is-touch-dragging');
+
+        if (ghostEl && ghostEl.parentNode) {
+          ghostEl.parentNode.removeChild(ghostEl);
+          ghostEl = null;
+        }
+
+        document.querySelectorAll('.slot, #shuffleArea').forEach(el => el.classList.remove('drop-hover'));
+
+        if (currentHoverTarget) {
+          playCardDropSound();
+
+          if (currentHoverTarget.classList.contains('slot')) {
+            const existingCard = currentHoverTarget.querySelector('.card-item');
+            if (existingCard && existingCard !== cardEl) {
+              cardEl.parentElement.appendChild(existingCard);
+            }
+            currentHoverTarget.appendChild(cardEl);
+          } else if (currentHoverTarget.id === 'shuffleArea') {
+            currentHoverTarget.appendChild(cardEl);
+          }
+          refreshSlotCaptions();
+        } else {
+          playCardDropSound();
+        }
+        currentHoverTarget = null;
+      }
+    });
+
+    cardEl.addEventListener('touchcancel', () => {
+      clearTimeout(pressTimer);
+      isTouchDragging = false;
+      cardEl.classList.remove('is-touch-dragging');
+      if (ghostEl && ghostEl.parentNode) {
+        ghostEl.parentNode.removeChild(ghostEl);
+        ghostEl = null;
+      }
+      document.querySelectorAll('.slot, #shuffleArea').forEach(el => el.classList.remove('drop-hover'));
+    });
+  }
+
   function createCardElement(card, inSlot = false, slotStep = 1) {
     const el = document.createElement('div');
     el.className = 'card-item';
@@ -1835,30 +2072,17 @@
       `;
     }
 
-    let pressTimer = null;
-    let isLongPress = false;
-
-    el.addEventListener('touchstart', (e) => {
-      isLongPress = false;
-      pressTimer = setTimeout(() => {
-        isLongPress = true;
-        triggerZoom(card.id, e);
-      }, 420);
-    }, { passive: true });
-
-    el.addEventListener('touchend', () => clearTimeout(pressTimer));
-    el.addEventListener('touchmove', () => clearTimeout(pressTimer));
+    bindTouchDragEvents(el, card);
 
     el.ondragstart = (e) => {
-      playCardMoveSound();
+      playCardPickSound();
       draggedCardId = el.id;
       e.dataTransfer.setData('text', el.id);
     };
 
     el.onclick = (e) => {
-      if (isLongPress) return;
       if (e.target.tagName === 'BUTTON' || e.target.classList.contains('card-quick-zoom-btn')) return;
-      playCardMoveSound();
+      playCardDropSound();
 
       if (el.parentElement.classList.contains('slot')) {
         document.getElementById('shuffleArea').appendChild(el);
@@ -1910,7 +2134,7 @@
     const cardEl = document.getElementById(draggedCardId);
     if (!cardEl) return;
 
-    playCardMoveSound();
+    playCardDropSound();
 
     if (target.classList.contains('slot')) {
       const existing = target.querySelector('.card-item');
@@ -1994,7 +2218,7 @@
   }
 
   function toggleConnectives() {
-    playCardMoveSound();
+    playCardPickSound();
     isConnectivesActive = !isConnectivesActive;
     const btn = document.getElementById('toggleConnectiveBtn');
     if (isConnectivesActive) {
@@ -2042,7 +2266,7 @@
 
   function triggerZoom(cardId, e) {
     if (e && e.stopPropagation) e.stopPropagation();
-    playCardMoveSound();
+    playCardPickSound();
     const card = currentLesson.cards.find(c => c.id === cardId);
     if (!card) return;
 
@@ -2090,7 +2314,7 @@
 
   function navigateZoom(direction) {
     if (!isGameFinishedAndCorrect) return;
-    playCardMoveSound();
+    playCardPickSound();
     const target = currentZoomStep + direction;
     if (target >= 1 && target <= currentLesson.cards.length) {
       currentZoomStep = target;
@@ -2110,7 +2334,6 @@
     document.getElementById('zoomModal').style.display = 'none';
   }
 
-  // 計時器
   function toggleTimerSettings() {
     const enabled = document.getElementById('timerEnableCheck').checked;
     const badge = document.getElementById('timerDisplayBadge');
@@ -2171,7 +2394,7 @@
   }
 
   function nextLesson() {
-    playCardMoveSound();
+    playCardPickSound();
     const lib = getLibrary();
     if (!lib || lib.length === 0) {
       showEmptyGuide();
@@ -2459,22 +2682,10 @@
     const files = Array.from(event.target.files);
     if (!files || files.length === 0) return;
 
-    const availableSlots = 10 - editingCardsList.length;
-    if (availableSlots <= 0) {
-      alert("目前已經達到上限 10 張卡片，請先刪除部分卡片再加入！");
-      event.target.value = "";
-      return;
-    }
-
-    const filesToLoad = files.slice(0, availableSlots);
-    if (files.length > availableSlots) {
-      alert(`已為您選取前 ${availableSlots} 張照片（排序練習最多支援 10 張）。`);
-    }
-
     batchCropQueue = [];
     let loadedCount = 0;
 
-    filesToLoad.forEach((file, idx) => {
+    files.forEach((file, idx) => {
       const reader = new FileReader();
       reader.onload = function(e) {
         batchCropQueue[idx] = {
@@ -2483,7 +2694,7 @@
           defaultName: file.name.replace(/\.[^/.]+$/, "") || `步驟 ${editingCardsList.length + idx + 1}`
         };
         loadedCount++;
-        if (loadedCount === filesToLoad.length) {
+        if (loadedCount === files.length) {
           batchCropQueue = batchCropQueue.filter(Boolean);
           startBatchCropProcess();
         }
@@ -2535,7 +2746,6 @@
     event.target.value = "";
   }
 
-  // ---------------- 製作/編輯彈窗 ---------------- //
   function openEditModal() {
     document.getElementById('lessonTitleInput').value = currentLesson ? currentLesson.title : "自訂排序練習";
     document.getElementById('lessonScriptInput').value = (currentLesson && currentLesson.script) ? currentLesson.script : "";
@@ -2562,10 +2772,6 @@
   }
 
   function addNewTextOnlyCard() {
-    if (editingCardsList.length >= 10) {
-      alert("目前已經達到上限 10 個步驟囉！");
-      return;
-    }
     const nextIdx = editingCardsList.length + 1;
     editingCardsList.push({
       id: nextIdx,
@@ -2673,7 +2879,6 @@
     closeEditModal();
   }
 
-  /* ---------------- 題庫與批次刪除功能 ---------------- */
   function openLibraryModal() {
     const lib = getLibrary();
     const list = document.getElementById('libraryList');
@@ -2726,7 +2931,6 @@
     const indicesToDelete = Array.from(checks).map(cb => parseInt(cb.dataset.index));
     let lib = getLibrary();
 
-    // 由後往前刪除避免索引偏移
     indicesToDelete.sort((a, b) => b - a).forEach(idx => {
       lib.splice(idx, 1);
     });
