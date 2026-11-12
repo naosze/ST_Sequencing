@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>排序練習 - 語言程序訓練</title>
+<title>言語治療排序練習</title>
 
 <!-- Web App 全螢幕模式支援標籤 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -73,95 +73,93 @@
   .title-group { display: flex; align-items: baseline; gap: 8px; }
   .title-group h1 { font-size: clamp(1rem, 1.6vw, 1.25rem); margin: 0; color: #1E293B; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
   .current-lesson-tag { font-size: 0.82rem; color: #64748B; font-weight: 600; }
-  .nav-btns { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+  .nav-btns { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
+  /* 簡約膠囊圖示按鈕 (純圖示，不要文字) */
   .btn {
-    background: var(--primary);
     color: white;
     border: none;
-    padding: 5px 11px;
-    border-radius: 9px;
-    font-size: 0.82rem;
+    height: 33px;
+    padding: 0 12px;
+    border-radius: 18px;
+    font-size: 1.05rem;
     cursor: pointer;
     font-weight: 600;
     transition: 0.15s;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
     user-select: none;
-    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   }
-  .btn:active { transform: scale(0.97); }
-  .btn-success { background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25); }
-  .btn-secondary { background: #64748B; box-shadow: 0 2px 6px rgba(100, 116, 139, 0.2); }
-  .btn-outline {
-    background: rgba(255, 255, 255, 0.75);
-    color: #334155;
-    border: 1px solid rgba(203, 213, 225, 0.8);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-  }
-  .btn-fullscreen { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25); }
+  .btn:active { transform: scale(0.95); }
+  .btn-primary { background: #3B82F6; }
+  .btn-fullscreen { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); }
   .btn-fullscreen.active { background: #6D28D9; border: 1.5px solid #EDE9FE; }
-
-  /* 離開按鈕 */
+  .btn-secondary { background: #64748B; }
+  .btn-success { background: #059669; }
+  .btn-outline {
+    background: rgba(255, 255, 255, 0.85);
+    color: #334155;
+    border: 1px solid rgba(203, 213, 225, 0.9);
+  }
   .btn-leave {
     background: #FEF2F2;
     color: #DC2626;
     border: 1px solid #FECACA;
-    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.12);
   }
   .btn-leave:hover { background: #FEE2E2; }
 
   /* 奪目的時序連接詞按鈕 */
   @keyframes prominentPulse {
-    0%, 100% {
-      box-shadow: 0 3px 12px rgba(234, 88, 12, 0.4);
-      transform: scale(1);
-    }
-    50% {
-      box-shadow: 0 5px 20px rgba(249, 115, 22, 0.8);
-      transform: scale(1.04);
-    }
+    0%, 100% { box-shadow: 0 3px 12px rgba(234, 88, 12, 0.4); transform: scale(1); }
+    50% { box-shadow: 0 5px 20px rgba(249, 115, 22, 0.8); transform: scale(1.06); }
   }
-
   .btn-connective-prominent {
     background: linear-gradient(135deg, #FF6B00 0%, #EA580C 50%, #C2410C 100%) !important;
     color: #FFFFFF !important;
-    font-size: 0.92rem !important;
-    padding: 6px 14px !important;
-    border-radius: 10px !important;
-    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    height: 30px !important;
+    padding: 0 11px !important;
+    border-radius: 16px !important;
     border: 2px solid #FFEDD5 !important;
     animation: prominentPulse 1.8s infinite ease-in-out;
-    letter-spacing: 0.5px;
     cursor: pointer;
   }
   .btn-connective-prominent.active {
     background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
     border-color: #D1FAE5 !important;
     animation: none !important;
-    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3) !important;
   }
 
-  /* 半透明輕量計時膠囊 */
+  /* 可輸入倒數時間之計時膠囊 */
   .timer-pill {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(203, 213, 225, 0.8);
-    border-radius: 9px;
-    padding: 3px 8px;
-    font-size: 0.78rem;
+    border: 1px solid rgba(203, 213, 225, 0.9);
+    border-radius: 18px;
+    padding: 2px 8px;
+    height: 33px;
+    font-size: 0.82rem;
     color: #334155;
     font-weight: 600;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
-  .timer-pill input[type="checkbox"] { margin: 0; cursor: pointer; }
+  .timer-input {
+    width: 44px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 1px 3px;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: bold;
+    color: #1E293B;
+    background: #FFFFFF;
+  }
+  .timer-pill input[type="checkbox"] { margin: 0; cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary); }
   .timer-display-badge { font-weight: bold; color: #DC2626; margin-left: 2px; }
 
   /* 遊戲主舞台 */
@@ -170,7 +168,7 @@
     height: 0;
     display: flex;
     flex-direction: row;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.7);
@@ -179,6 +177,7 @@
     box-shadow: 0 8px 30px rgba(79, 70, 229, 0.06);
     overflow: hidden;
     position: relative;
+    gap: 0;
   }
 
   .empty-guide-screen {
@@ -200,12 +199,15 @@
   .guide-desc { font-size: clamp(0.85rem, 1.2vw, 1rem); color: #64748B; max-width: 480px; line-height: 1.5; margin-bottom: 24px; }
   .guide-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
-  /* 左欄待選區 */
+  /* 左欄待選區：白色透明度 60% */
   .left-panel {
     flex: 0 0 auto;
     width: var(--left-panel-width);
     min-width: 65px;
     max-width: 50vw;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     overflow-y: scroll !important;
@@ -214,20 +216,20 @@
     touch-action: pan-y !important;
     height: 100%;
     max-height: 100%;
-    padding-right: 2px;
+    padding: 6px;
   }
   .left-panel::-webkit-scrollbar { width: 5px; }
   .left-panel::-webkit-scrollbar-track { background: rgba(241, 245, 249, 0.6); border-radius: 4px; }
   .left-panel::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 4px; }
 
-  /* 簡潔優雅的分隔條 (無提示徽章干擾) */
+  /* 簡潔的寬度調整把手 */
   .resizer-handle {
     width: 14px;
     flex-shrink: 0;
     cursor: col-resize;
     user-select: none;
     touch-action: none;
-    display: flex;
+    display: none; /* 初始在未載入練習時隱藏 */
     align-items: center;
     justify-content: center;
     position: relative;
@@ -240,26 +242,34 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 2px;
+    width: 2.5px;
     background: linear-gradient(180deg, rgba(203,213,225,0.2) 0%, rgba(203,213,225,0.8) 50%, rgba(203,213,225,0.2) 100%);
     border-radius: 2px;
-    transition: background 0.15s, width 0.15s, box-shadow 0.15s;
+    transition: background 0.15s, width 0.15s;
   }
   .resizer-handle:hover .resizer-line,
   .resizer-handle.resizing .resizer-line {
     background: var(--primary);
     width: 3.5px;
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
   }
 
   .panel-header-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 6px;
     flex-shrink: 0;
+    min-height: 28px;
+    position: relative;
   }
-  .panel-title { font-size: 0.85rem; font-weight: bold; color: #334155; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .panel-title {
+    font-size: 0.88rem;
+    font-weight: bold;
+    color: #334155;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   /* 左欄待選區 */
   .shuffle-area {
@@ -284,14 +294,17 @@
     flex-shrink: 0;
   }
 
-  /* 右欄大舞台 */
+  /* 右欄大舞台：米黃色透明度 70% */
   .right-panel {
     flex: 1 1 0;
     min-width: 0;
+    background: rgba(254, 252, 232, 0.7);
+    border: 1px solid rgba(254, 240, 138, 0.45);
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding-left: 6px;
+    padding: 6px 10px;
   }
 
   /* 提示功能欄與橫幅 */
@@ -300,11 +313,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(241, 245, 249, 0.75);
+    background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(203, 213, 225, 0.8);
-    border-radius: 8px;
+    border-radius: 16px;
     padding: 3px 8px;
     margin-bottom: 4px;
     font-size: 0.76rem;
@@ -344,6 +356,7 @@
     padding: 0 4px;
   }
 
+  /* 排卡畫布：確保完整展示圖卡，絕無橫向滾動條 */
   .flow-canvas {
     flex: 1;
     height: 0;
@@ -352,22 +365,21 @@
     justify-content: space-evenly;
     align-items: center;
     gap: 2px;
-    padding: 2px 4px;
+    padding: 2px;
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden !important; /* 不左右 scroll */
   }
 
   .flow-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: max-content;
-    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
     flex: 0 0 auto;
     min-height: 0;
-    gap: 6px;
-    overflow: visible;
+    gap: 4px;
+    overflow: hidden;
   }
 
   .turn-indicator-bar {
@@ -398,17 +410,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: clamp(16px, 1.6vw, 24px);
-    height: clamp(16px, 1.6vw, 24px);
-    background: rgba(241, 245, 249, 0.85);
+    width: clamp(14px, 1.4vw, 22px);
+    height: clamp(14px, 1.4vw, 22px);
+    background: rgba(255, 255, 255, 0.85);
     color: #475569;
     border-radius: 50%;
     font-weight: bold;
-    font-size: clamp(10px, 1vw, 14px);
+    font-size: clamp(9px, 0.9vw, 13px);
     border: 1px solid rgba(203, 213, 225, 0.7);
-    backdrop-filter: blur(4px);
     flex-shrink: 0;
-    margin: 0 2px;
+    margin: 0 1px;
   }
 
   /* 卡槽樣式與拖曳高亮 */
@@ -417,17 +428,17 @@
     border-radius: 12px;
     display: flex;
     position: relative;
-    background: rgba(248, 250, 252, 0.55);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     box-sizing: border-box;
     flex-shrink: 0;
-    transition: width 0.1s, height 0.1s, transform 0.15s, background-color 0.15s, border-color 0.15s;
+    transition: width 0.1s, height 0.1s, transform 0.15s, background-color 0.15s;
   }
   .slot.drop-hover {
     border-color: #3B82F6 !important;
-    background: rgba(219, 234, 254, 0.85) !important;
-    transform: scale(1.04);
+    background: rgba(219, 234, 254, 0.9) !important;
+    transform: scale(1.03);
     box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
     z-index: 5;
   }
@@ -436,8 +447,8 @@
     position: absolute;
     top: 4px;
     left: 4px;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
     color: white;
     border-radius: 50%;
@@ -452,10 +463,9 @@
 
   /* 卡片本體 */
   .card-item {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.85);
     border-radius: 11px;
     cursor: grab;
     display: flex;
@@ -471,11 +481,7 @@
   }
   .card-item:active { cursor: grabbing; }
 
-  .card-item.is-touch-dragging {
-    opacity: 0.3 !important;
-    transform: scale(0.95);
-  }
-
+  .card-item.is-touch-dragging { opacity: 0.3 !important; transform: scale(0.95); }
   .touch-drag-ghost {
     position: fixed !important;
     pointer-events: none !important;
@@ -608,7 +614,7 @@
   .btn-check {
     font-size: 1rem;
     padding: 8px 36px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
   }
@@ -682,15 +688,15 @@
   .zoom-nav-btn.next { right: 8px; }
   .zoom-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
 
-  /* 手機直向模式特殊適配 */
+  /* 手機直向模式 */
   @media (max-width: 600px) and (orientation: portrait) {
     body { padding: 4px 6px; }
     header { margin-bottom: 3px; }
     .title-group h1 { font-size: 0.95rem; }
-    .nav-btns .btn { padding: 4px 6px; font-size: 0.72rem; }
+    .nav-btns .btn { height: 28px; padding: 0 8px; font-size: 0.95rem; }
 
     .game-container { flex-direction: column; gap: 4px; padding: 6px 8px; }
-    .resizer-handle { display: none; }
+    .resizer-handle { display: none !important; }
     
     .left-panel {
       flex: 0 0 auto !important;
@@ -698,7 +704,6 @@
       max-width: 100% !important;
       max-height: 140px;
       border-right: none;
-      border-bottom: 2px dashed rgba(203, 213, 225, 0.7);
       padding-right: 0;
       padding-bottom: 4px;
       overflow-x: auto !important;
@@ -709,7 +714,7 @@
     .shuffle-area { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 2px 2px 8px 2px; }
     .shuffle-area .card-item { width: 88px !important; flex-shrink: 0; }
 
-    .right-panel { flex: 1 !important; width: 100% !important; padding-left: 0; }
+    .right-panel { flex: 1 !important; width: 100% !important; padding: 6px; }
     .flow-canvas { justify-content: space-evenly; padding: 2px; }
     .bottom-bar { margin-top: 4px; }
     .btn-check { padding: 6px 28px; font-size: 0.95rem; }
@@ -858,28 +863,28 @@
 
 <header>
   <div class="title-group">
-    <h1>🧩 排序練習</h1>
+    <h1>🧩 言語治療排序練習</h1>
     <div class="current-lesson-tag" id="currentLessonTitle">尚未載入練習</div>
   </div>
 
   <div class="nav-btns">
-    <!-- 輕巧計時膠囊 -->
-    <div class="timer-pill">
-      <input type="checkbox" id="timerEnableCheck" onchange="toggleTimerSettings()">
-      <span id="timerLabel">計時</span>
+    <!-- 輕巧計時膠囊 (支援輸入倒數時間) -->
+    <div class="timer-pill" title="設定倒數時間後勾選開始">
+      <span>⏱️</span>
+      <input type="number" id="timerSecondsInput" class="timer-input" min="5" max="999" value="60" title="輸入倒數秒數">
+      <span style="font-size: 0.72rem; color: #64748B;">秒</span>
+      <input type="checkbox" id="timerEnableCheck" onchange="toggleTimerSettings()" title="開始/停止計時">
       <span id="timerDisplayBadge" class="timer-display-badge" style="display:none;">01:00</span>
     </div>
 
-    <!-- 全螢幕 / 退出切換 -->
-    <button class="btn btn-fullscreen" id="fullscreenBtn" onclick="toggleFullscreen()">⛶ 全螢幕</button>
-    <button class="btn btn-outline" onclick="openLibraryModal()">📚 題庫</button>
-    <button class="btn btn-secondary" onclick="openEditModal()">✏️ 製作</button>
-    <button class="btn btn-secondary" onclick="exportJSON()">📤 匯出</button>
-    <button class="btn btn-success" style="background:#059669;" onclick="openImportModal()">📥 匯入</button>
-    <button class="btn" onclick="initGame()">🔄 打亂</button>
-
-    <!-- 離開練習按鈕 -->
-    <button class="btn btn-leave" onclick="exitCurrentLesson()" title="離開練習並清空目前卡片">🚪 離開</button>
+    <!-- 簡約風格膠囊圖示按鈕 (不要文字) -->
+    <button class="btn btn-fullscreen" id="fullscreenBtn" onclick="toggleFullscreen()" title="全螢幕">⛶</button>
+    <button class="btn btn-outline" onclick="openLibraryModal()" title="題庫">📚</button>
+    <button class="btn btn-secondary" onclick="openEditModal()" title="製作新題目">✏️</button>
+    <button class="btn btn-secondary" onclick="exportJSON()" title="匯出教材">📤</button>
+    <button class="btn btn-success" onclick="openImportModal()" title="匯入教材">📥</button>
+    <button class="btn btn-primary" onclick="initGame()" title="打亂卡片">🔄</button>
+    <button class="btn btn-leave" onclick="exitCurrentLesson()" title="離開練習並清空卡片">🚪</button>
   </div>
 </header>
 
@@ -887,7 +892,7 @@
   <!-- 首次使用引導畫面 -->
   <div class="empty-guide-screen" id="emptyGuideScreen">
     <div class="guide-icon">📂</div>
-    <div class="guide-title">歡迎使用排序練習！</div>
+    <div class="guide-title">歡迎使用言語治療排序練習！</div>
     <div class="guide-desc">
       目前尚未載入任何練習題。<br>
       請點擊下方按鈕<b>匯入教材</b>，或直接<b>新增圖片/純文字</b>製作新題目！
@@ -898,32 +903,34 @@
     </div>
   </div>
 
-  <!-- 左：待選盤 (寬度可自訂拖拉，圖卡隨之自適應放大/縮小) -->
+  <!-- 左：待選盤 (白色透明度 60%，標題置中) -->
   <div class="left-panel" id="leftPanel">
-    <div class="panel-header-row">
-      <div class="panel-title">程序卡匣</div>
+    <div class="panel-header-row" style="justify-content: center;">
+      <div class="panel-title" style="text-align: center; width: 100%;">程序卡匣</div>
     </div>
     <div class="shuffle-area" id="shuffleArea" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
   </div>
 
-  <!-- 中間：拖曳寬度調節分隔條 (簡潔流暢線條) -->
+  <!-- 中間：寬度調節分隔條 (未載入練習時自動隱藏) -->
   <div class="resizer-handle" id="resizerHandle" title="左右拖動自訂卡匣寬度 (雙擊可還原預設)">
     <div class="resizer-line"></div>
   </div>
 
-  <!-- 右：大舞台流程區 (自動佔滿剩餘寬度) -->
+  <!-- 右：大舞台流程區 (米黃色透明度 70%，標題完全置中，絕無橫向滾動條) -->
   <div class="right-panel" id="rightPanel">
-    <div class="panel-header-row">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <div class="panel-title">依次序排列程序圖</div>
-        <button id="toggleConnectiveBtn" class="btn btn-connective-prominent" style="display: none;" onclick="toggleConnectives()">
-          🔗 加入時序連接詞
+    <div class="panel-header-row" style="justify-content: space-between;">
+      <div style="display: flex; align-items: center; min-width: 36px;">
+        <button id="toggleConnectiveBtn" class="btn btn-connective-prominent" style="display: none;" onclick="toggleConnectives()" title="加入時序連接詞">
+          🔗
         </button>
       </div>
 
-      <div>
-        <button id="layoutSwitchBtn" class="btn btn-outline" style="font-size:0.75rem; padding:2px 6px;" onclick="cycleFlowLayoutMode()">
-          🔄 切換 (<span id="layoutModeLabel">雙層</span>)
+      <!-- 標題置中 -->
+      <div class="panel-title" style="text-align: center; margin: 0 auto; flex: 1;">依次序排列程序圖</div>
+
+      <div style="display: flex; align-items: center; min-width: 36px; justify-content: flex-end;">
+        <button id="layoutSwitchBtn" class="btn btn-outline" style="height: 28px; padding: 0 9px; font-size: 0.9rem;" onclick="cycleFlowLayoutMode()" title="切換排版模式">
+          🔄
         </button>
       </div>
     </div>
@@ -933,16 +940,16 @@
       <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span class="hint-label">💡 提示詞：</span>
         <div class="hint-btn-group">
-          <button class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem;" onclick="startProgressiveHint('text')">📝 僅文字</button>
-          <button class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem;" onclick="startProgressiveHint('audio')">🔊 僅讀出</button>
-          <button class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem;" onclick="startProgressiveHint('both')">🌟 文字+讀出</button>
+          <button class="btn btn-outline" style="height: 25px; padding: 0 8px; font-size: 0.8rem;" onclick="startProgressiveHint('text')" title="僅文字提示">📝</button>
+          <button class="btn btn-outline" style="height: 25px; padding: 0 8px; font-size: 0.8rem;" onclick="startProgressiveHint('audio')" title="僅語音朗讀">🔊</button>
+          <button class="btn btn-outline" style="height: 25px; padding: 0 8px; font-size: 0.8rem;" onclick="startProgressiveHint('both')" title="文字+語音朗讀">🌟</button>
         </div>
       </div>
 
       <!-- 顯示/隱藏圖卡標題按鈕 -->
       <div>
-        <button id="btnToggleCaption" class="btn btn-outline" style="padding: 1px 7px; font-size: 0.72rem; color: #047857; border-color: #A7F3D0; background: #ECFDF5;" onclick="toggleCardCaptions()">
-          🙈 隱藏標題
+        <button id="btnToggleCaption" class="btn btn-outline" style="height: 25px; padding: 0 8px; font-size: 0.82rem; color: #047857; border-color: #A7F3D0; background: #ECFDF5;" onclick="toggleCardCaptions()" title="隱藏/顯示圖卡文字">
+          🙈
         </button>
       </div>
     </div>
@@ -952,7 +959,7 @@
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
         <div id="hintTextContent" style="font-weight: 700; flex: 1;"></div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <button id="btnNextHint" class="btn btn-primary" style="padding: 3px 11px; font-size: 0.78rem; background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);" onclick="nextProgressiveHint()">
+          <button id="btnNextHint" class="btn btn-primary" style="height: 26px; padding: 0 10px; font-size: 0.76rem; background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);" onclick="nextProgressiveHint()">
             ➡️ 下一個提示
           </button>
           <button class="hint-close-btn" onclick="hideHintBanner()">✕</button>
@@ -981,8 +988,8 @@
     <div id="zoomLockNotice" style="color: #94A3B8; font-size: 0.75rem; margin-bottom: 4px; display: none;">🔒 完成正確排序後，可按左右箭頭連續瀏覽全程序</div>
 
     <div style="display: flex; gap: 10px; margin-top: 2px;">
-      <button class="btn btn-primary" style="font-size: 0.85rem; padding: 5px 16px;" onclick="speakCurrentZoomText()">🔊 朗讀說明</button>
-      <button class="btn" style="background: #E2E8F0; color: #1E293B; font-size: 0.85rem; padding: 5px 16px;" onclick="closeZoomModal()">關閉</button>
+      <button class="btn btn-primary" style="font-size: 0.85rem; padding: 5px 16px; height: 32px;" onclick="speakCurrentZoomText()">🔊 朗讀說明</button>
+      <button class="btn" style="background: #E2E8F0; color: #1E293B; font-size: 0.85rem; padding: 5px 16px; height: 32px;" onclick="closeZoomModal()">關閉</button>
     </div>
   </div>
 </div>
@@ -995,16 +1002,16 @@
       <img id="cropperTargetImg" style="max-width: 100%; display: block;" src="">
     </div>
     <div class="crop-toolbar">
-      <button class="btn btn-outline" onclick="if(cropper)cropper.rotate(-90)">↺ 左轉 90°</button>
-      <button class="btn btn-outline" onclick="if(cropper)cropper.rotate(90)">↻ 右轉 90°</button>
-      <button class="btn btn-outline" onclick="if(cropper)cropper.reset()">🔄 重設選框</button>
+      <button class="btn btn-outline" style="height: 30px; font-size: 0.8rem; padding: 0 10px;" onclick="if(cropper)cropper.rotate(-90)">↺ 左轉 90°</button>
+      <button class="btn btn-outline" style="height: 30px; font-size: 0.8rem; padding: 0 10px;" onclick="if(cropper)cropper.rotate(90)">↻ 右轉 90°</button>
+      <button class="btn btn-outline" style="height: 30px; font-size: 0.8rem; padding: 0 10px;" onclick="if(cropper)cropper.reset()">🔄 重設選框</button>
     </div>
     <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-      <button class="btn btn-outline" onclick="closeCropperModal()">取消</button>
+      <button class="btn btn-outline" style="height: 32px; font-size: 0.85rem; padding: 0 14px;" onclick="closeCropperModal()">取消</button>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-outline" id="cropperSkipAllBtn" style="display:none;" onclick="applyAllRemainingFull()">⏩ 剩餘全部用整張</button>
-        <button class="btn btn-secondary" onclick="applyFullImage()">🖼️ 使用整張圖片</button>
-        <button class="btn btn-success" onclick="applyCroppedImage()">✂️ 裁切所選部分</button>
+        <button class="btn btn-outline" id="cropperSkipAllBtn" style="display:none; height: 32px; font-size: 0.85rem; padding: 0 12px;" onclick="applyAllRemainingFull()">⏩ 剩餘全部用整張</button>
+        <button class="btn btn-secondary" style="height: 32px; font-size: 0.85rem; padding: 0 12px;" onclick="applyFullImage()">🖼️ 使用整張圖片</button>
+        <button class="btn btn-success" style="height: 32px; font-size: 0.85rem; padding: 0 12px;" onclick="applyCroppedImage()">✂️ 裁切所選部分</button>
       </div>
     </div>
   </div>
@@ -1017,11 +1024,11 @@
     <div style="border: 2px dashed #3B82F6; background: #EFF6FF; border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 12px;">
       <b>📷 方式 1：相機掃描 QR Code 獲取題目</b>
       <div style="margin-top: 8px;">
-        <button class="btn btn-primary" id="startScanBtn" onclick="startQrScanner()">開啟相機掃描</button>
+        <button class="btn btn-primary" id="startScanBtn" style="height: 32px; padding: 0 14px; font-size: 0.85rem;" onclick="startQrScanner()">開啟相機掃描</button>
       </div>
       <div id="qrReaderContainer" style="display: none; margin-top: 10px;">
         <div id="qrReader" style="width: 100%; border-radius: 8px; overflow: hidden;"></div>
-        <button class="btn btn-outline" style="margin-top: 8px; color: var(--danger);" onclick="stopQrScanner()">關閉相機</button>
+        <button class="btn btn-outline" style="margin-top: 8px; color: var(--danger); height: 30px; font-size: 0.8rem;" onclick="stopQrScanner()">關閉相機</button>
       </div>
     </div>
     <div style="border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 12px; padding: 10px;">
@@ -1029,12 +1036,12 @@
       <input type="file" id="importFileInput" accept=".json" style="margin-top: 6px;" onchange="importByFile(event)">
     </div>
     <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
-      <button class="btn btn-outline" onclick="closeImportModal()">取消</button>
+      <button class="btn btn-outline" style="height: 32px; padding: 0 14px; font-size: 0.85rem;" onclick="closeImportModal()">取消</button>
     </div>
   </div>
 </div>
 
-<!-- 製作/編輯彈窗 (步驟無上限) -->
+<!-- 製作/編輯彈窗 -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-box">
     <div class="modal-title">✏️ 製作/編輯排序卡</div>
@@ -1044,7 +1051,6 @@
       <input type="text" id="lessonTitleInput" placeholder="例如：早上起床流程 / 炒飯步驟" style="width:100%; padding:6px 8px; border:1px solid #CBD5E1; border-radius:6px; margin-top:2px;">
     </div>
 
-    <!-- 程序提示文字稿：前置背景導言 -->
     <div style="margin-bottom: 10px; background: rgba(241, 245, 249, 0.75); border: 1px solid rgba(203, 213, 225, 0.9); border-radius: 8px; padding: 7px 10px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
         <label style="font-size: 0.82rem; color: #334155;"><b>📖 題目背景介紹 / 開場導言 (可選)：</b></label>
@@ -1070,18 +1076,18 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
       <b>卡片步驟列表 (共 <span id="editCardsCount">0</span> 個步驟)：</b>
       <div style="display: flex; gap: 4px;">
-        <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 7px; color: #4338CA; border-color: #C7D2FE; background: #EEF2FF;" onclick="autoFillAllCardHints()">
-          ✨ 自動填入時序提示詞 (首先/跟住/最後)
+        <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 7px; height: 26px; color: #4338CA; border-color: #C7D2FE; background: #EEF2FF;" onclick="autoFillAllCardHints()">
+          ✨ 自動填入時序詞
         </button>
-        <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 6px;" onclick="clearAllEditCards()">清空重選</button>
+        <button class="btn btn-outline" style="font-size:0.72rem; padding:2px 6px; height: 26px;" onclick="clearAllEditCards()">清空重選</button>
       </div>
     </div>
 
     <div class="edit-grid" id="editCardsContainer"></div>
 
     <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-      <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
-      <button class="btn btn-success" onclick="saveEditedLesson()">儲存並加入練習庫</button>
+      <button class="btn btn-outline" style="height: 32px; padding: 0 14px; font-size: 0.85rem;" onclick="closeEditModal()">取消</button>
+      <button class="btn btn-success" style="height: 32px; padding: 0 14px; font-size: 0.85rem;" onclick="saveEditedLesson()">儲存並加入練習庫</button>
     </div>
   </div>
 </div>
@@ -1095,7 +1101,7 @@
         <label style="font-size: 0.8rem; color: #475569; display: flex; align-items: center; gap: 4px; cursor: pointer;">
           <input type="checkbox" id="selectAllLibCheck" onchange="toggleSelectAllLibrary(this.checked)"> 全選
         </label>
-        <button class="btn" style="background: #EF4444; color: white; padding: 4px 10px; font-size: 0.78rem;" onclick="batchDeleteFromLibrary()">
+        <button class="btn" style="background: #EF4444; color: white; padding: 0 10px; height: 28px; font-size: 0.78rem;" onclick="batchDeleteFromLibrary()">
           🗑️ 批次刪除選取
         </button>
       </div>
@@ -1104,7 +1110,7 @@
     <div id="libraryList" style="margin-top: 8px; max-height: 52vh; overflow-y: auto;"></div>
     
     <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-      <button class="btn btn-outline" onclick="document.getElementById('libModal').style.display='none'">關閉</button>
+      <button class="btn btn-outline" style="height: 32px; padding: 0 14px; font-size: 0.85rem;" onclick="document.getElementById('libModal').style.display='none'">關閉</button>
     </div>
   </div>
 </div>
@@ -1230,7 +1236,6 @@
     }
   }
 
-  // 1. 拿起圖卡音效
   function playCardPickSound() {
     try {
       const ctx = getAudioContext();
@@ -1254,7 +1259,6 @@
     } catch (e) {}
   }
 
-  // 2. 放置圖卡音效
   function playCardDropSound() {
     try {
       const ctx = getAudioContext();
@@ -1329,16 +1333,8 @@
     
     const btn = document.getElementById('btnToggleCaption');
     if (btn) {
-      btn.innerHTML = isCardCaptionHidden ? '👁️ 顯示標題' : '🙈 隱藏標題';
-      if (isCardCaptionHidden) {
-        btn.style.color = '#B45309';
-        btn.style.borderColor = '#FDE68A';
-        btn.style.background = '#FFFBEB';
-      } else {
-        btn.style.color = '#047857';
-        btn.style.borderColor = '#A7F3D0';
-        btn.style.background = '#ECFDF5';
-      }
+      btn.innerHTML = isCardCaptionHidden ? '👁️' : '🙈';
+      btn.title = isCardCaptionHidden ? '顯示標題' : '隱藏標題';
     }
     
     if (currentLesson) {
@@ -1380,7 +1376,8 @@
     const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
     const btn = document.getElementById('fullscreenBtn');
     if (btn) {
-      btn.innerHTML = isFull ? '🗗 退出' : '⛶ 全螢幕';
+      btn.innerHTML = isFull ? '🗗' : '⛶';
+      btn.title = isFull ? '退出全螢幕' : '全螢幕';
       if (isFull) btn.classList.add('active');
       else btn.classList.remove('active');
     }
@@ -1414,14 +1411,12 @@
   function updateLayoutButtonUI() {
     const count = currentLesson ? currentLesson.cards.length : 4;
     const switchBtn = document.getElementById('layoutSwitchBtn');
-    const label = document.getElementById('layoutModeLabel');
     if (count <= 3 && !isMobilePortrait()) {
       switchBtn.style.display = 'none';
       flowLayoutMode = 'single';
     } else {
       switchBtn.style.display = 'inline-flex';
     }
-    label.innerText = (flowLayoutMode === 'single') ? '單行' : '雙層';
   }
 
   function cycleFlowLayoutMode() {
@@ -1458,28 +1453,37 @@
     testImg.src = currentLesson.cards[0].img;
   }
 
+  /* 嚴格防溢出計算，確保卡片完整展示且絕無橫向滾動條 */
   function getOptimalSlotDimensions(cardsInRow, isTwoRow) {
     const canvas = document.getElementById('flowCanvas');
     const mobile = isMobilePortrait();
     
-    const paddingSafety = mobile ? 8 : 24;
-    const availW = canvas ? Math.max(100, canvas.clientWidth - paddingSafety) : 360;
+    const paddingSafety = mobile ? 4 : 12;
+    const availW = canvas ? Math.max(60, canvas.clientWidth - paddingSafety) : 360;
     let availH = canvas ? (canvas.clientHeight || 450) : 450;
 
     if (isTwoRow) availH = (availH - 16) / 2;
 
-    const footerH = isCardCaptionHidden ? 28 : (mobile ? 42 : 50); 
-    const arrowTotalSpace = mobile ? 20 : 30; 
+    const footerH = isCardCaptionHidden ? 26 : (mobile ? 38 : 46); 
+    const arrowNodeW = Math.max(12, Math.min(22, Math.floor(availW / (cardsInRow * 3.2))));
+    const arrowTotalSpace = (cardsInRow > 1) ? arrowNodeW + (mobile ? 2 : 4) : 0;
     const totalGaps = (cardsInRow - 1) * arrowTotalSpace;
-    const maxW = (availW - totalGaps) / cardsInRow;
-    const maxH = availH * 0.98;
+
+    // 嚴格保證不超過 maxW
+    const maxW = Math.floor((availW - totalGaps) / cardsInRow);
+    const maxH = availH * 0.96;
     const r = currentLessonAspectRatio || 1.0;
 
     let optW = Math.min(maxW, (maxH - footerH) * r);
-    optW = Math.max(mobile ? 68 : 50, optW);
-    let optH = optW / r + footerH;
+    optW = Math.max(16, Math.floor(optW));
 
-    return { width: Math.floor(optW), height: Math.floor(optH) };
+    let optH = Math.floor(optW / r + footerH);
+    if (optH > maxH) {
+      optH = Math.floor(maxH);
+      optW = Math.max(16, Math.floor((optH - footerH) * r));
+    }
+
+    return { width: Math.max(16, Math.min(maxW, optW)), height: optH, arrowW: arrowNodeW };
   }
 
   function getConnectorWord(stepIndex, totalSteps) {
@@ -1524,9 +1528,9 @@
   function computeDynamicFontSize(text, isInSlot = false) {
     const len = text.length;
     if (isInSlot) {
-      if (len > 20) return 'clamp(13px, 1.4vw, 17px)';
-      if (len > 12) return 'clamp(15px, 1.7vw, 20px)';
-      return 'clamp(17px, 2vw, 24px)';
+      if (len > 20) return 'clamp(12px, 1.3vw, 16px)';
+      if (len > 12) return 'clamp(14px, 1.5vw, 19px)';
+      return 'clamp(16px, 1.8vw, 22px)';
     } else {
       if (len > 22) return '11px';
       if (len > 14) return '12.5px';
@@ -1685,6 +1689,7 @@
     }
   }
 
+  /* 未載入練習時，隱藏左右欄寬度調節棒 */
   function showEmptyGuide() {
     currentLesson = null;
     document.getElementById('emptyGuideScreen').style.display = 'flex';
@@ -1693,6 +1698,10 @@
     document.getElementById('shuffleArea').innerHTML = '';
     document.getElementById('flowCanvas').innerHTML = '';
     document.getElementById('toggleConnectiveBtn').style.display = 'none';
+    
+    const resizer = document.getElementById('resizerHandle');
+    if (resizer) resizer.style.display = 'none';
+
     hideHintBanner();
     const checkBtn = document.getElementById('checkAnswerBtn');
     if (checkBtn) {
@@ -1705,6 +1714,10 @@
     currentLesson = JSON.parse(JSON.stringify(lesson));
     document.getElementById('emptyGuideScreen').style.display = 'none';
     
+    // 載入練習後顯現寬度調節棒
+    const resizer = document.getElementById('resizerHandle');
+    if (resizer && !isMobilePortrait()) resizer.style.display = 'flex';
+
     resetControlBarToCheckMode();
     const checkBtn = document.getElementById('checkAnswerBtn');
     if (checkBtn) {
@@ -1733,7 +1746,7 @@
     
     const connectiveBtn = document.getElementById('toggleConnectiveBtn');
     connectiveBtn.style.display = 'none';
-    connectiveBtn.innerHTML = "🔗 加入時序連接詞";
+    connectiveBtn.innerHTML = "🔗";
     connectiveBtn.classList.remove('active');
 
     renderSlots(false);
@@ -1770,7 +1783,7 @@
 
       for (let i = 1; i <= total; i++) {
         row.appendChild(createSlotNode(i, optSize, existingCardsMap[i]));
-        if (i < total) row.appendChild(createArrowNode());
+        if (i < total) row.appendChild(createArrowNode(optSize.arrowW));
       }
       canvas.appendChild(row);
     } else {
@@ -1782,7 +1795,7 @@
       row1.className = 'flow-row';
       for (let i = 1; i <= row1Count; i++) {
         row1.appendChild(createSlotNode(i, optSize, existingCardsMap[i]));
-        if (i < row1Count) row1.appendChild(createArrowNode());
+        if (i < row1Count) row1.appendChild(createArrowNode(optSize.arrowW));
       }
       canvas.appendChild(row1);
 
@@ -1795,7 +1808,7 @@
       row2.className = 'flow-row';
       for (let i = row1Count + 1; i <= total; i++) {
         row2.appendChild(createSlotNode(i, optSize, existingCardsMap[i]));
-        if (i < total) row2.appendChild(createArrowNode());
+        if (i < total) row2.appendChild(createArrowNode(optSize.arrowW));
       }
       canvas.appendChild(row2);
     }
@@ -1823,9 +1836,12 @@
     return slot;
   }
 
-  function createArrowNode() {
+  function createArrowNode(sizeW = 18) {
     const arrow = document.createElement('div');
     arrow.className = 'arrow-node';
+    arrow.style.width = `${sizeW}px`;
+    arrow.style.height = `${sizeW}px`;
+    arrow.style.fontSize = `${Math.max(8, Math.floor(sizeW * 0.65))}px`;
     arrow.innerHTML = '➔';
     return arrow;
   }
@@ -1842,7 +1858,6 @@
     });
   }
 
-  // ---------------- iPad / 手機 實體觸控拖曳 (Touch Drag & Drop) ---------------- //
   function bindTouchDragEvents(cardEl, card) {
     let startX = 0, startY = 0;
     let isTouchDragging = false;
@@ -2147,10 +2162,12 @@
     isConnectivesActive = !isConnectivesActive;
     const btn = document.getElementById('toggleConnectiveBtn');
     if (isConnectivesActive) {
-      btn.innerHTML = "✓ 已加入時序連接詞";
+      btn.innerHTML = "✓";
+      btn.title = "已加入時序詞";
       btn.classList.add('active');
     } else {
-      btn.innerHTML = "🔗 加入時序連接詞";
+      btn.innerHTML = "🔗";
+      btn.title = "加入時序連接詞";
       btn.classList.remove('active');
     }
     refreshSlotCaptions();
@@ -2259,14 +2276,19 @@
     document.getElementById('zoomModal').style.display = 'none';
   }
 
+  // ---------------- 計時器：用戶可輸入時間後啟動 ---------------- //
   function toggleTimerSettings() {
     const enabled = document.getElementById('timerEnableCheck').checked;
     const badge = document.getElementById('timerDisplayBadge');
+    const secInput = document.getElementById('timerSecondsInput');
+
     if (enabled) {
       badge.style.display = 'inline-block';
+      secInput.disabled = true;
       resetTimer();
     } else {
       badge.style.display = 'none';
+      secInput.disabled = false;
       stopTimer();
       stopUrgentFlash();
     }
@@ -2275,7 +2297,8 @@
   function resetTimer() {
     stopTimer();
     stopUrgentFlash();
-    timerRemainingSeconds = 60;
+    const secInput = document.getElementById('timerSecondsInput');
+    timerRemainingSeconds = Math.max(5, parseInt(secInput.value) || 60);
     updateTimerDisplay();
     startTimerIfEnabled();
   }
@@ -2736,8 +2759,8 @@
         ${thumbHtml}
         
         <div style="display:flex; gap:4px; width:100%; justify-content:center;">
-          ${hasImg ? `<button class="btn btn-outline" style="padding:1px 5px; font-size:10px;" onclick="openCropForExistingCard(${idx})">✂️ 裁切</button>` : ''}
-          <button class="btn btn-outline" style="padding:1px 5px; font-size:10px;" onclick="document.getElementById('replaceInput_${idx}').click()">🖼️ 換圖</button>
+          ${hasImg ? `<button class="btn btn-outline" style="padding:1px 5px; font-size:10px; height:24px;" onclick="openCropForExistingCard(${idx})">✂️</button>` : ''}
+          <button class="btn btn-outline" style="padding:1px 5px; font-size:10px; height:24px;" onclick="document.getElementById('replaceInput_${idx}').click()">🖼️</button>
           <input type="file" id="replaceInput_${idx}" accept="image/*" style="display:none;" onchange="handleReplaceCardImage(event, ${idx})">
         </div>
 
@@ -2751,8 +2774,8 @@
                oninput="editingCardsList[${idx}].hint = this.value">
 
         <div style="display: flex; gap: 4px; width: 100%;">
-          <button class="btn btn-outline" style="flex: 1; padding: 2px 4px; font-size: 10px;" onclick="moveEditCard(${idx}, -1)">◀ 前移</button>
-          <button class="btn btn-outline" style="flex: 1; padding: 2px 4px; font-size: 10px;" onclick="moveEditCard(${idx}, 1)">後移 ▶</button>
+          <button class="btn btn-outline" style="flex: 1; padding: 2px 4px; font-size: 10px; height:24px;" onclick="moveEditCard(${idx}, -1)">◀ 前移</button>
+          <button class="btn btn-outline" style="flex: 1; padding: 2px 4px; font-size: 10px; height:24px;" onclick="moveEditCard(${idx}, 1)">後移 ▶</button>
         </div>
       `;
       container.appendChild(cardEl);
@@ -2828,7 +2851,7 @@
           <span style="font-size:0.75rem; color:#64748B;">共 ${item.cards.length} 個步驟 ${item.script ? '· 包含背景導言' : ''}</span>
         </div>
         <div style="display:flex; gap:6px;">
-          <button class="btn btn-success" style="padding:4px 9px; font-size:0.8rem;" onclick="selectFromLibrary(${index})">載入</button>
+          <button class="btn btn-success" style="padding:0 12px; height:28px; font-size:0.8rem;" onclick="selectFromLibrary(${index})">載入</button>
         </div>
       `;
       list.appendChild(row);
